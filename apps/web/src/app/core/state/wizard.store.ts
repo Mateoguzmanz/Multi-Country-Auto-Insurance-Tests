@@ -57,10 +57,12 @@ export class WizardStore {
     this.stateSignal.update((state) => ({ ...state, selectedPlan: null }));
   }
 
-  acceptTerms(version: string): void {
+  setTermsAccepted(accepted: boolean, version: string | null): void {
     this.stateSignal.update((state) => ({
       ...state,
-      terms: { accepted: true, acceptedVersion: version },
+      terms: accepted
+        ? { accepted: true, acceptedVersion: version }
+        : { accepted: false, acceptedVersion: null },
     }));
   }
 
