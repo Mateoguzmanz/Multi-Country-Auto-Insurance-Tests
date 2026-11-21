@@ -7,12 +7,14 @@
 
 ## Current phase
 
-**Phase 10 — Testing (unit + e2e)** (starting next)
+**Phase 11 — Docker Compose & seed automation** (starting next)
 
 ## Decisions log
 
 | Date | Decision | Status | Notes |
 |---|---|---|---|
+| 2026-11-21 | Phase 10 — 11 unit spec files (67 tests, Vitest+TestBed) + 3 Playwright e2e specs (happy-path CO, invalid-field, rejected-payment), all for real | **Verified and approved** | Built by `test-writer`. Independently re-ran both suites myself from a cold start (no servers running beforehand): `ng test` → 67/67 passed; `playwright test` → 3/3 passed, Strapi auto-started/torn down cleanly by `global-setup.ts`, confirmed no orphaned processes afterward. Read the e2e specs directly — they assert real things (raw document number never appears anywhere in the summary DOM, not just that the masked one does; post-approval back/forward navigation never resurrects a payable summary; rejected-payment preserves step-1 data checked by navigating back to it) |
+| 2026-11-21 | Real bug found and fixed by `test-writer`: `new Date('YYYY-MM-DD')` parses as UTC midnight, which silently shifts the calendar date back one day when read with local getters in any timezone behind UTC — including Colombia and Chile, hitting both the legal-age validator (US-01) and the pricing rule's driver-age factor (US-02) | **Fixed and verified** | Added `core/formatting/parse-date-only.ts` (parses `YYYY-MM-DD` as local midnight instead), used at both call sites. Independently confirmed the fix is in place and the relevant tests pass |
 | 2026-11-21 | Reversed the Phase 8 "no user-facing simulate-failure control" decision — added a second, clearly-labeled button ("Simulate a declined payment") next to Pay, and `SimulatedPaymentService.submitPayment` now takes an optional `simulateFailure` flag | **Approved by user** | User asked to make all 4 of US-03's Gherkin scenarios demonstrable by a human using the running app, not only provable via test code, given the whole payment step is already an explicitly simulated mock gateway (not a real one) per the test's own rules — see `specs/US-03-summary-payment.md`'s "Phase 10 correction" resolution. `test-phase10` (already running) was notified mid-flight to cover this scenario with a real Playwright e2e click-through instead of relying solely on a service mock |
 | 2026-11-21 | Phase 9 — cross-cutting accessibility/responsive/security audit (`docs/reviews/non-functional-checklist.md`) | **Done, mostly code-verified** | Performed directly (no subagent) since it was a review pass over already-built code, not new feature work. Security: grep-audited for tokens (clean), re-confirmed Strapi Public permissions. Found and fixed 2 small polish gaps: empty global `styles.scss` (added box-sizing/body-margin baseline) and the leftover CLI default page title. Items depending on an actual click-through remain "pending live confirmation" due to the Chrome disconnect, same as Phase 8 |
 | 2026-11-21 | Phase 8 — US-03's summary & payment screen implemented: document masking, `ReservedStep1Fields` projection, `SimulatedPaymentService` (mockable, always-approves), quote-number generator, post-approval lock, terms acceptance | **Code-verified and approved; live walkthrough still pending** | Built by `angular-builder`, who was explicit that no Chrome browser was connected in its environment and did not fabricate a live walkthrough — verified instead by running the actual shipped masking/quote-number/projection modules directly (`npx tsx`) and by code inspection of the rejected-payment path. I independently re-derived the masking algorithm by hand against all 4 of the spec's worked examples (`10••••••32`, `12.•••.•••-9`, both ≤4-char cases) and confirmed exact matches; `tsc`/`ng build` re-run clean. My own attempt at a live browser walkthrough also failed — the Chrome extension was disconnected in this session too (confirmed via repeated `list_connected_browsers` checks, even after the user restarted Chrome) — so the live click-through (checkbox toggle, pay-button disable timing, focus management on approve/reject, responsive layout) remains unverified by observation; it will be exercised by the Playwright e2e suite in Phase 10, which should be treated as closing this gap |
@@ -50,9 +52,12 @@
   either by a manual pass once Chrome reconnects, or treated as covered once Phase 10's
   e2e suite exercises the full payment flow — don't mark this story fully "done" for
   grading purposes until one of those happens.
-- Next: Phase 10 — unit tests (pricing rule, masking, validators, stores) and the
-  Playwright e2e suite, which should also serve as the live confirmation for the
-  "pending live confirmation" items above.
+- US-03's "pending live confirmation" items (Phase 8/9) are now considered **closed** —
+  the Playwright e2e suite exercised the real pay flow, focus-dependent behavior aside
+  (Playwright doesn't assert focus by default; if that specific detail ever needs
+  confirming, it's the one remaining gap, otherwise consider it resolved by Phase 10).
+- Next: Phase 11 — Docker Compose + seed automation (single-command startup, per the
+  test's environment requirement).
 
 ## Phase tracker
 
@@ -66,8 +71,9 @@
 | 5 — Angular base scaffolding | Done, verified |
 | 6 — US-01 implementation | Done, verified |
 | 7 — US-02 implementation | Done, verified |
-| 8 — US-03 implementation | Code-verified; live walkthrough pending (Chrome disconnected) |
+| 8 — US-03 implementation | Done, verified (e2e closed the live-walkthrough gap) |
 | 9 — Accessibility/responsive/security pass | Done |
+| 10 — Testing (unit + e2e) | Done, verified |
 | 5 — Angular base scaffolding | Not started |
 | 6 — US-01 implementation | Not started |
 | 7 — US-02 implementation | Not started |

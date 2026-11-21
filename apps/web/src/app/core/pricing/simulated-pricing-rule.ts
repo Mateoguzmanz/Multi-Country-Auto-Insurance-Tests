@@ -1,3 +1,4 @@
+import { parseDateOnly } from '../formatting/parse-date-only';
 import type { Step1FormValue } from '../models/form-field.model';
 
 export type VehicleUsage = 'personal' | 'commercial';
@@ -55,7 +56,7 @@ function calculateAge(dateOfBirth: string | null, referenceDate: Date): number |
     return null;
   }
 
-  const dob = new Date(dateOfBirth);
+  const dob = parseDateOnly(dateOfBirth);
   if (Number.isNaN(dob.getTime())) {
     return null;
   }

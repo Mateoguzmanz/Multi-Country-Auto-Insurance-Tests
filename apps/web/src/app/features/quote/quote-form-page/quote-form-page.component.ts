@@ -9,6 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { parseDateOnly } from '../../../core/formatting/parse-date-only';
 import { CountryContentService } from '../../../core/services/country-content.service';
 import { WizardStore } from '../../../core/state/wizard.store';
 import type {
@@ -20,7 +21,7 @@ import type {
 
 type Step1FormGroup = FormGroup<Record<string, FormControl<FormFieldValue>>>;
 
-function defaultValueFor(type: FormFieldType): FormFieldValue {
+export function defaultValueFor(type: FormFieldType): FormFieldValue {
   switch (type) {
     case 'checkbox':
       return false;
@@ -31,14 +32,14 @@ function defaultValueFor(type: FormFieldType): FormFieldValue {
   }
 }
 
-function legalAgeValidator(): ValidatorFn {
+export function legalAgeValidator(): ValidatorFn {
   return (control: AbstractControl<FormFieldValue>): ValidationErrors | null => {
     const value = control.value;
     if (value === null || value === '') {
       return null;
     }
 
-    const dateOfBirth = new Date(value as string);
+    const dateOfBirth = parseDateOnly(value as string);
     if (Number.isNaN(dateOfBirth.getTime())) {
       return { legalAge: true };
     }
@@ -56,7 +57,7 @@ function legalAgeValidator(): ValidatorFn {
   };
 }
 
-function buildValidators(field: FormFieldEntry): ValidatorFn[] {
+export function buildValidators(field: FormFieldEntry): ValidatorFn[] {
   const validators: ValidatorFn[] = [];
 
   if (field.required) {
@@ -87,7 +88,7 @@ function buildValidators(field: FormFieldEntry): ValidatorFn[] {
   return validators;
 }
 
-function buildStep1FormGroup(fields: FormFieldEntry[], existingValue: Step1FormValue): Step1FormGroup {
+export function buildStep1FormGroup(fields: FormFieldEntry[], existingValue: Step1FormValue): Step1FormGroup {
   const group = new FormGroup<Record<string, FormControl<FormFieldValue>>>({});
 
   for (const field of fields) {
