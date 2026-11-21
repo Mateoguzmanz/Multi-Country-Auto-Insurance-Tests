@@ -4,18 +4,16 @@ import { fillValidCoStep1Form } from './co-step1-form';
 test.describe('Colombia — invalid-field scenario (US-01)', () => {
   test('shows the configured error message and blocks advancing to the plans step', async ({ page }) => {
     await page.goto('/');
-    // The app defaults to Spanish; this suite asserts the English app-chrome strings.
-    await page.getByRole('button', { name: 'English' }).click();
     await page.getByRole('button', { name: 'Colombia', exact: true }).click();
     await expect(page).toHaveURL(/\/quote\/form$/);
 
     // Everything else is valid except an under-age date of birth.
     await fillValidCoStep1Form(page, { dateOfBirth: '2018-01-01' });
 
-    const dateOfBirthField = page.getByLabel('Fecha de nacimiento');
+    const dateOfBirthField = page.getByLabel('Date of birth');
     await dateOfBirthField.blur();
 
-    await expect(page.getByRole('alert').filter({ hasText: 'Debes ser mayor de edad (18 años) para continuar.' })).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'You must be of legal age (18 years) to continue.' })).toBeVisible();
 
     const continueButton = page.getByRole('button', { name: 'Continue' });
     await expect(continueButton).toBeDisabled();

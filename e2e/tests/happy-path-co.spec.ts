@@ -7,8 +7,6 @@ const MASKED_DOCUMENT_NUMBER = '10••••••78';
 test.describe('Colombia — full happy-path wizard flow', () => {
   test('quotes, pays and confirms, and does not resurrect a payable summary afterward', async ({ page }) => {
     await page.goto('/');
-    // The app defaults to Spanish; this suite asserts the English app-chrome strings.
-    await page.getByRole('button', { name: 'English' }).click();
     await page.getByRole('button', { name: 'Colombia', exact: true }).click();
 
     // US-01 — fill a fully valid step-1 form.

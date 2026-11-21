@@ -94,8 +94,8 @@ describe('resolveConditionalRule', () => {
     key: 'documentNumber',
     dependsOnKey: 'documentType',
     validationByOption: {
-      RUT: { pattern: '^[0-9]{7,8}-[0-9Kk]$', errorMessage: 'Ingresa un RUT chileno válido.' },
-      PASSPORT: { pattern: '^[A-Za-z0-9]{6,12}$', errorMessage: 'Ingresa un número de pasaporte válido.' },
+      RUT: { pattern: '^[0-9]{7,8}-[0-9Kk]$', errorMessage: 'Enter a valid Chilean RUT.' },
+      PASSPORT: { pattern: '^[A-Za-z0-9]{6,12}$', errorMessage: 'Enter a valid passport number.' },
     },
   });
 
@@ -115,7 +115,7 @@ describe('resolveConditionalRule', () => {
   it('returns the matching rule for the sibling value', () => {
     expect(resolveConditionalRule(documentNumberField, 'RUT')).toEqual({
       pattern: '^[0-9]{7,8}-[0-9Kk]$',
-      errorMessage: 'Ingresa un RUT chileno válido.',
+      errorMessage: 'Enter a valid Chilean RUT.',
     });
   });
 });
@@ -165,7 +165,7 @@ describe('QuoteFormPageComponent', () => {
       type: 'select',
       options: [
         { label: 'RUT', value: 'RUT' },
-        { label: 'Pasaporte', value: 'PASSPORT' },
+        { label: 'Passport', value: 'PASSPORT' },
       ],
     });
     const documentNumberField = makeField({
@@ -173,8 +173,8 @@ describe('QuoteFormPageComponent', () => {
       dependsOnKey: 'documentType',
       validation: { pattern: '^[0-9]{7,8}-[0-9Kk]$' },
       validationByOption: {
-        RUT: { pattern: '^[0-9]{7,8}-[0-9Kk]$', errorMessage: 'Ingresa un RUT chileno válido.' },
-        PASSPORT: { pattern: '^[A-Za-z0-9]{6,12}$', errorMessage: 'Ingresa un número de pasaporte válido.' },
+        RUT: { pattern: '^[0-9]{7,8}-[0-9Kk]$', errorMessage: 'Enter a valid Chilean RUT.' },
+        PASSPORT: { pattern: '^[A-Za-z0-9]{6,12}$', errorMessage: 'Enter a valid passport number.' },
       },
     });
 
@@ -188,13 +188,13 @@ describe('QuoteFormPageComponent', () => {
     form?.controls['documentType']?.setValue('RUT');
     expect(documentNumberControl?.hasError('pattern')).toBe(true);
     expect(fixture.componentInstance.effectiveErrorMessage(documentNumberField)).toBe(
-      'Ingresa un RUT chileno válido.',
+      'Enter a valid Chilean RUT.',
     );
 
     form?.controls['documentType']?.setValue('PASSPORT');
     expect(documentNumberControl?.valid).toBe(true);
     expect(fixture.componentInstance.effectiveErrorMessage(documentNumberField)).toBe(
-      'Ingresa un número de pasaporte válido.',
+      'Enter a valid passport number.',
     );
   });
 });

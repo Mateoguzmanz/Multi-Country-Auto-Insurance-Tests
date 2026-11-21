@@ -9,8 +9,6 @@ test.describe('Chile — full happy-path wizard flow', () => {
     page,
   }) => {
     await page.goto('/');
-    // The app defaults to Spanish; this suite asserts the English app-chrome strings.
-    await page.getByRole('button', { name: 'English' }).click();
     await page.getByRole('button', { name: 'Chile', exact: true }).click();
 
     // US-01 — fill a fully valid step-1 form (RUT as the document type).
@@ -19,16 +17,16 @@ test.describe('Chile — full happy-path wizard flow', () => {
 
     // Conditional validation (ADR-0002 follow-up): documentNumber's pattern depends on the
     // currently selected documentType, and must re-validate live without a reload.
-    const documentNumberField = page.getByLabel('Número de documento');
+    const documentNumberField = page.getByLabel('Document number');
     await documentNumberField.fill('AB123456');
     await documentNumberField.blur();
-    await expect(page.getByRole('alert').filter({ hasText: 'Ingresa un RUT chileno válido.' })).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'Enter a valid Chilean RUT.' })).toBeVisible();
 
-    await page.getByLabel('Tipo de documento').selectOption('PASSPORT');
-    await expect(page.getByRole('alert').filter({ hasText: 'Ingresa un RUT chileno válido.' })).not.toBeVisible();
+    await page.getByLabel('Document type').selectOption('PASSPORT');
+    await expect(page.getByRole('alert').filter({ hasText: 'Enter a valid Chilean RUT.' })).not.toBeVisible();
 
     // Switch back to RUT with a valid value before continuing.
-    await page.getByLabel('Tipo de documento').selectOption('RUT');
+    await page.getByLabel('Document type').selectOption('RUT');
     await documentNumberField.fill(RAW_RUT);
     await documentNumberField.blur();
 

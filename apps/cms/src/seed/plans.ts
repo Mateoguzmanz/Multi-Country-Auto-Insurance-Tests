@@ -21,8 +21,8 @@ interface PlanSeed {
 
 const CO_PLANS: PlanSeed[] = [
   {
-    name: 'Plan Básico',
-    shortDescription: 'Cobertura esencial para tu vehículo a un precio accesible.',
+    name: 'Basic Plan',
+    shortDescription: 'Essential coverage for your vehicle at an affordable price.',
     basePrice: 450000,
     currency: 'COP',
     order: 1,
@@ -30,16 +30,16 @@ const CO_PLANS: PlanSeed[] = [
     active: true,
     country: 'CO',
     coverages: [
-      { name: 'Responsabilidad civil', description: 'Cubre daños a terceros causados por tu vehículo.' },
-      { name: 'Asistencia en vía', description: 'Grúa y auxilio mecánico básico, disponible 24/7.' },
+      { name: 'Civil liability', description: 'Covers damage to third parties caused by your vehicle.' },
+      { name: 'Roadside assistance', description: 'Basic towing and roadside mechanical assistance, available 24/7.' },
     ],
     benefits: [
-      { name: 'Línea de atención', description: 'Soporte telefónico simulado disponible 24/7.' },
+      { name: 'Support line', description: 'Simulated 24/7 phone support.' },
     ],
   },
   {
-    name: 'Plan Esencial Plus',
-    shortDescription: 'El equilibrio entre precio y cobertura para el día a día.',
+    name: 'Essential Plus Plan',
+    shortDescription: 'The right balance between price and coverage for everyday use.',
     basePrice: 680000,
     currency: 'COP',
     order: 2,
@@ -47,18 +47,18 @@ const CO_PLANS: PlanSeed[] = [
     active: true,
     country: 'CO',
     coverages: [
-      { name: 'Responsabilidad civil ampliada', description: 'Mayor límite de cobertura frente a terceros.' },
-      { name: 'Daños parciales', description: 'Cubre colisiones y choques parciales del vehículo asegurado.' },
-      { name: 'Robo total', description: 'Indemnización simulada en caso de hurto total del vehículo.' },
+      { name: 'Extended civil liability', description: 'Higher coverage limit for third-party claims.' },
+      { name: 'Partial damage', description: 'Covers collisions and partial damage to the insured vehicle.' },
+      { name: 'Total theft', description: 'Simulated compensation in case of total vehicle theft.' },
     ],
     benefits: [
-      { name: 'Vehículo de reemplazo', description: 'Vehículo de reemplazo simulado por hasta 5 días.' },
-      { name: 'Descuento en llantas', description: '10% de descuento simulado en talleres aliados.' },
+      { name: 'Replacement vehicle', description: 'Simulated replacement vehicle for up to 5 days.' },
+      { name: 'Tire discount', description: '10% simulated discount at partner workshops.' },
     ],
   },
   {
-    name: 'Plan Premium',
-    shortDescription: 'Cobertura integral todo riesgo para máxima tranquilidad.',
+    name: 'Premium Plan',
+    shortDescription: 'Comprehensive all-risk coverage for maximum peace of mind.',
     basePrice: 1250000,
     currency: 'COP',
     order: 3,
@@ -66,19 +66,19 @@ const CO_PLANS: PlanSeed[] = [
     active: true,
     country: 'CO',
     coverages: [
-      { name: 'Todo riesgo', description: 'Cobertura amplia que incluye daños propios del vehículo.' },
-      { name: 'Responsabilidad civil ampliada', description: 'Mayor límite de cobertura frente a terceros.' },
-      { name: 'Robo total y parcial', description: 'Indemnización simulada por hurto total o de partes.' },
+      { name: 'All-risk', description: 'Broad coverage that includes damage to the insured vehicle itself.' },
+      { name: 'Extended civil liability', description: 'Higher coverage limit for third-party claims.' },
+      { name: 'Total and partial theft', description: 'Simulated compensation for total theft or stolen parts.' },
     ],
     benefits: [
-      { name: 'Vehículo de reemplazo extendido', description: 'Vehículo de reemplazo simulado por hasta 15 días.' },
-      { name: 'Conductor elegido', description: 'Servicio de conductor elegido simulado, 4 veces al año.' },
-      { name: 'Asesoría legal', description: 'Orientación legal simulada en caso de siniestro.' },
+      { name: 'Extended replacement vehicle', description: 'Simulated replacement vehicle for up to 15 days.' },
+      { name: 'Designated driver', description: 'Simulated designated-driver service, 4 times a year.' },
+      { name: 'Legal advice', description: 'Simulated legal guidance in case of a claim.' },
     ],
   },
   {
-    name: 'Plan Corporativo',
-    shortDescription: 'Cobertura para flotas empresariales — en preparación.',
+    name: 'Corporate Plan',
+    shortDescription: 'Coverage for business fleets — coming soon.',
     basePrice: 2100000,
     currency: 'COP',
     order: 4,
@@ -86,18 +86,18 @@ const CO_PLANS: PlanSeed[] = [
     active: false,
     country: 'CO',
     coverages: [
-      { name: 'Flota empresarial', description: 'Cobertura simulada para más de un vehículo por póliza.' },
+      { name: 'Business fleet', description: 'Simulated coverage for more than one vehicle per policy.' },
     ],
     benefits: [
-      { name: 'Gestor de cuenta', description: 'Gestor de cuenta simulado dedicado para la empresa.' },
+      { name: 'Account manager', description: 'Simulated dedicated account manager for the business.' },
     ],
   },
 ];
 
 const CL_PLANS: PlanSeed[] = [
   {
-    name: 'Plan Básico',
-    shortDescription: 'Cobertura esencial para tu vehículo a un precio accesible.',
+    name: 'Basic Plan',
+    shortDescription: 'Essential coverage for your vehicle at an affordable price.',
     basePrice: 85000,
     currency: 'CLP',
     order: 1,
@@ -105,16 +105,16 @@ const CL_PLANS: PlanSeed[] = [
     active: true,
     country: 'CL',
     coverages: [
-      { name: 'Responsabilidad civil', description: 'Cubre daños a terceros causados por tu vehículo.' },
-      { name: 'Asistencia en ruta', description: 'Grúa y auxilio mecánico básico, disponible 24/7.' },
+      { name: 'Civil liability', description: 'Covers damage to third parties caused by your vehicle.' },
+      { name: 'Roadside assistance', description: 'Basic towing and roadside mechanical assistance, available 24/7.' },
     ],
     benefits: [
-      { name: 'Línea de atención', description: 'Soporte telefónico simulado disponible 24/7.' },
+      { name: 'Support line', description: 'Simulated 24/7 phone support.' },
     ],
   },
   {
-    name: 'Plan Esencial Plus',
-    shortDescription: 'El equilibrio entre precio y cobertura para el día a día.',
+    name: 'Essential Plus Plan',
+    shortDescription: 'The right balance between price and coverage for everyday use.',
     basePrice: 120000,
     currency: 'CLP',
     order: 2,
@@ -122,18 +122,18 @@ const CL_PLANS: PlanSeed[] = [
     active: true,
     country: 'CL',
     coverages: [
-      { name: 'Responsabilidad civil ampliada', description: 'Mayor límite de cobertura frente a terceros.' },
-      { name: 'Daños parciales', description: 'Cubre colisiones y choques parciales del vehículo asegurado.' },
-      { name: 'Robo total', description: 'Indemnización simulada en caso de robo total del vehículo.' },
+      { name: 'Extended civil liability', description: 'Higher coverage limit for third-party claims.' },
+      { name: 'Partial damage', description: 'Covers collisions and partial damage to the insured vehicle.' },
+      { name: 'Total theft', description: 'Simulated compensation in case of total vehicle theft.' },
     ],
     benefits: [
-      { name: 'Vehículo de reemplazo', description: 'Vehículo de reemplazo simulado por hasta 5 días.' },
-      { name: 'Descuento en neumáticos', description: '10% de descuento simulado en talleres aliados.' },
+      { name: 'Replacement vehicle', description: 'Simulated replacement vehicle for up to 5 days.' },
+      { name: 'Tire discount', description: '10% simulated discount at partner workshops.' },
     ],
   },
   {
-    name: 'Plan Premium',
-    shortDescription: 'Cobertura integral todo riesgo para máxima tranquilidad.',
+    name: 'Premium Plan',
+    shortDescription: 'Comprehensive all-risk coverage for maximum peace of mind.',
     basePrice: 210000,
     currency: 'CLP',
     order: 3,
@@ -141,19 +141,19 @@ const CL_PLANS: PlanSeed[] = [
     active: true,
     country: 'CL',
     coverages: [
-      { name: 'Todo riesgo', description: 'Cobertura amplia que incluye daños propios del vehículo.' },
-      { name: 'Responsabilidad civil ampliada', description: 'Mayor límite de cobertura frente a terceros.' },
-      { name: 'Robo total y parcial', description: 'Indemnización simulada por robo total o de partes.' },
+      { name: 'All-risk', description: 'Broad coverage that includes damage to the insured vehicle itself.' },
+      { name: 'Extended civil liability', description: 'Higher coverage limit for third-party claims.' },
+      { name: 'Total and partial theft', description: 'Simulated compensation for total theft or stolen parts.' },
     ],
     benefits: [
-      { name: 'Vehículo de reemplazo extendido', description: 'Vehículo de reemplazo simulado por hasta 15 días.' },
-      { name: 'Conductor designado', description: 'Servicio de conductor designado simulado, 4 veces al año.' },
-      { name: 'Asesoría legal', description: 'Orientación legal simulada en caso de siniestro.' },
+      { name: 'Extended replacement vehicle', description: 'Simulated replacement vehicle for up to 15 days.' },
+      { name: 'Designated driver', description: 'Simulated designated-driver service, 4 times a year.' },
+      { name: 'Legal advice', description: 'Simulated legal guidance in case of a claim.' },
     ],
   },
   {
-    name: 'Plan Corporativo',
-    shortDescription: 'Cobertura para flotas empresariales — en preparación.',
+    name: 'Corporate Plan',
+    shortDescription: 'Coverage for business fleets — coming soon.',
     basePrice: 390000,
     currency: 'CLP',
     order: 4,
@@ -161,10 +161,10 @@ const CL_PLANS: PlanSeed[] = [
     active: false,
     country: 'CL',
     coverages: [
-      { name: 'Flota empresarial', description: 'Cobertura simulada para más de un vehículo por póliza.' },
+      { name: 'Business fleet', description: 'Simulated coverage for more than one vehicle per policy.' },
     ],
     benefits: [
-      { name: 'Gestor de cuenta', description: 'Gestor de cuenta simulado dedicado para la empresa.' },
+      { name: 'Account manager', description: 'Simulated dedicated account manager for the business.' },
     ],
   },
 ];

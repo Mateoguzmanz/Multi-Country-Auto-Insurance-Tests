@@ -22,7 +22,7 @@ const VALID_STEP1_VALUE: Step1FormValue = {
 
 const SELECTED_PLAN: SelectedPlan = {
   id: 1,
-  name: 'Plan Esencial Plus',
+  name: 'Essential Plus Plan',
   country: 'CO',
   finalPrice: 680000,
   currency: 'COP',

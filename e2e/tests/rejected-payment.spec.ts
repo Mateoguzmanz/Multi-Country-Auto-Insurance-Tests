@@ -8,8 +8,6 @@ import { fillValidCoStep1Form } from './co-step1-form';
 test.describe('Colombia — rejected payment (US-03)', () => {
   test('shows a clear error, returns to a retryable state, and keeps all entered data', async ({ page }) => {
     await page.goto('/');
-    // The app defaults to Spanish; this suite asserts the English app-chrome strings.
-    await page.getByRole('button', { name: 'English' }).click();
     await page.getByRole('button', { name: 'Colombia', exact: true }).click();
     await fillValidCoStep1Form(page);
     await page.getByRole('button', { name: 'Continue' }).click();
@@ -33,7 +31,7 @@ test.describe('Colombia — rejected payment (US-03)', () => {
     // Previously entered data must still be there — going back to step 1 shows it untouched.
     await page.getByRole('link', { name: 'Edit data' }).click();
     await expect(page).toHaveURL(/\/quote\/form$/);
-    await expect(page.getByLabel('Nombre completo')).toHaveValue('Juan Pérez');
-    await expect(page.getByLabel('Número de documento')).toHaveValue('1012345678');
+    await expect(page.getByLabel('Full name')).toHaveValue('Juan Pérez');
+    await expect(page.getByLabel('Document number')).toHaveValue('1012345678');
   });
 });
