@@ -24,42 +24,52 @@ export class CountryContentService {
   private readonly http = inject(HttpClient);
   private readonly countryStore = inject(CountryStore);
 
-  private readonly formFieldsState = this.createCountryScopedState<FormFieldEntry[]>((country) =>
-    this.http
-      .get<StrapiCollectionResponse<FormFieldEntry>>(`${environment.strapiApiBaseUrl}/form-fields`, {
-        params: new HttpParams()
-          .set('filters[country][$eq]', country)
-          .set('sort', 'order:asc,id:asc')
-          .set('pagination[pageSize]', '100'),
-      })
-      .pipe(map((response) => response.data)),
-  );
+  private readonly formFieldsRefresh = signal(0);
+  private readonly plansRefresh = signal(0);
+  private readonly termsRefresh = signal(0);
 
-  private readonly plansState = this.createCountryScopedState<PlanEntry[]>((country) =>
-    this.http
-      .get<StrapiCollectionResponse<PlanEntry>>(`${environment.strapiApiBaseUrl}/plans`, {
-        params: new HttpParams()
-          .set('filters[country][$eq]', country)
-          .set('filters[active][$eq]', 'true')
-          .set('sort', 'order:asc,id:asc')
-          .set('populate', '*')
-          .set('pagination[pageSize]', '100'),
-      })
-      .pipe(map((response) => response.data)),
-  );
-
-  private readonly termsState = this.createCountryScopedState<TermsAndConditionEntry | null>((country) =>
-    this.http
-      .get<StrapiCollectionResponse<TermsAndConditionEntry>>(
-        `${environment.strapiApiBaseUrl}/terms-and-conditions`,
-        {
+  private readonly formFieldsState = this.createCountryScopedState<FormFieldEntry[]>(
+    (country) =>
+      this.http
+        .get<StrapiCollectionResponse<FormFieldEntry>>(`${environment.strapiApiBaseUrl}/form-fields`, {
           params: new HttpParams()
             .set('filters[country][$eq]', country)
-            .set('sort', 'id:asc')
-            .set('pagination[pageSize]', '1'),
-        },
-      )
-      .pipe(map((response) => response.data[0] ?? null)),
+            .set('sort', 'order:asc,id:asc')
+            .set('pagination[pageSize]', '100'),
+        })
+        .pipe(map((response) => response.data)),
+    this.formFieldsRefresh,
+  );
+
+  private readonly plansState = this.createCountryScopedState<PlanEntry[]>(
+    (country) =>
+      this.http
+        .get<StrapiCollectionResponse<PlanEntry>>(`${environment.strapiApiBaseUrl}/plans`, {
+          params: new HttpParams()
+            .set('filters[country][$eq]', country)
+            .set('filters[active][$eq]', 'true')
+            .set('sort', 'order:asc,id:asc')
+            .set('populate', '*')
+            .set('pagination[pageSize]', '100'),
+        })
+        .pipe(map((response) => response.data)),
+    this.plansRefresh,
+  );
+
+  private readonly termsState = this.createCountryScopedState<TermsAndConditionEntry | null>(
+    (country) =>
+      this.http
+        .get<StrapiCollectionResponse<TermsAndConditionEntry>>(
+          `${environment.strapiApiBaseUrl}/terms-and-conditions`,
+          {
+            params: new HttpParams()
+              .set('filters[country][$eq]', country)
+              .set('sort', 'id:asc')
+              .set('pagination[pageSize]', '1'),
+          },
+        )
+        .pipe(map((response) => response.data[0] ?? null)),
+    this.termsRefresh,
   );
 
   getFormFields(): Signal<CountryContentState<FormFieldEntry[]>> {
@@ -74,26 +84,46 @@ export class CountryContentService {
     return this.termsState;
   }
 
+  /** Re-issues the form-fields request for the current country (e.g. after a load error). */
+  refetchFormFields(): void {
+    this.formFieldsRefresh.update((n) => n + 1);
+  }
+
+  /** Re-issues the plans request for the current country (e.g. after a load error). */
+  refetchPlans(): void {
+    this.plansRefresh.update((n) => n + 1);
+  }
+
+  /** Re-issues the terms request for the current country (e.g. after a load error). */
+  refetchTerms(): void {
+    this.termsRefresh.update((n) => n + 1);
+  }
+
   private createCountryScopedState<T>(
     request: (country: CountryCode) => Observable<T>,
+    refresh: Signal<number>,
   ): Signal<CountryContentState<T>> {
     const state = signal<CountryContentState<T>>(noCountrySelectedState<T>());
     let fetchedForCountry: CountryCode | null = null;
+    let fetchedForRefreshToken: number | null = null;
 
     effect(() => {
       const country = this.countryStore.country();
+      const refreshToken = refresh();
 
       if (!country) {
         fetchedForCountry = null;
+        fetchedForRefreshToken = null;
         state.set(noCountrySelectedState<T>());
         return;
       }
 
-      if (country === fetchedForCountry) {
+      if (country === fetchedForCountry && refreshToken === fetchedForRefreshToken) {
         return;
       }
 
       fetchedForCountry = country;
+      fetchedForRefreshToken = refreshToken;
       state.set({ data: null, loading: true, error: null });
 
       request(country).subscribe({

@@ -7,12 +7,14 @@
 
 ## Current phase
 
-**Phase 6 — US-01 implementation (real step-1 form)** (starting next)
+**Phase 7 — US-02 implementation (real plan list)** (starting next)
 
 ## Decisions log
 
 | Date | Decision | Status | Notes |
 |---|---|---|---|
+| 2026-11-21 | Phase 6 — US-01's real step-1 form implemented: dynamic typed `FormGroup` from live Strapi config, generic `Validators` mapping + custom `legalAgeValidator()` for `dateOfBirth`, misconfigured-`select` state, accessible labels/errors, `sessionStorage` rehydration | **Verified and approved** | Built by `angular-builder`; this agent gave an honest, itemized verification (including what it could *not* verify live, e.g. the misconfigured-select state has no real seed data to trigger it) and caught a real bug itself (`computed()` over `FormGroup.valid`, which mutates in place rather than emitting signal writes — fixed to a plain method). Independently re-verified in the browser myself: country switch renders the real 13-field CO form, legal-age validator fires with the exact configured error message, full valid fill enables Continue and navigates to `/quote/plans`, and browser back-navigation restores every value with no re-fetch |
+| 2026-11-21 | Added `refetchFormFields()`/`refetchPlans()`/`refetchTerms()` to `CountryContentService`; changed the form page's "Retry" button from `window.location.reload()` to the real refetch | **Fixed and approved** | `angular-builder` had flagged the full-page-reload workaround itself (no clean refetch existed on the shared service, and extending it was out of that task's scope) rather than silently shipping it — fixed directly since it's a small, consistent addition to an already-approved service, not a new pattern |
 | 2026-11-21 | Phase 5 — Angular `apps/web` scaffolded: standalone routing shell for the 3-step wizard, `CountryStore`/`WizardStore` (signals + `sessionStorage`), `CountryContentService` (country structurally cannot be omitted; explicit loading/error/data state) | **Verified and approved** | Built by `angular-builder`; this agent, unlike `strapi-architect`, actually ran `ng build`/`tsc --noEmit`/`ng serve` + curl and pasted real output — independently re-verified anyway (own `ng build` run clean, code read directly, zero `any` confirmed by grep) |
 | 2026-11-21 | Corrected US-01/02/03 Data contracts: Strapi 5's REST API returns attributes flat on the entity (`{id, documentId, ...fields}`), not nested under a v4-style `attributes` key; `SelectedPlan.id` is `number`, not `string` | **Approved** | Discovered by `angular-builder` against the live, already-seeded Strapi API; independently confirmed against this session's own earlier `curl` output from Phase 4. `apps/web/src/app/core/models/*.ts` is the source of truth going forward |
 | 2026-11-21 | `WizardStore` resets its whole state when `CountryStore`'s country changes after an initial selection | **Approved, kept in Phase 5** | Flagged by `angular-builder` as going slightly beyond "just the shape"; approved keeping it now since it's a direct, necessary consequence of ADR-0001 (country-scoped content) and US-03's already-approved "re-acceptance required on country change" resolution, not a new decision |
@@ -32,9 +34,11 @@
 
 ## Open questions / next decision needed
 
-- None blocking. Next: implement US-01's real step-1 form (Phase 6) — dynamic
-  `FormGroup` built from `CountryContentService.getFormFields()`, validators mapped per
-  field, accessible labels/errors, against the now-corrected flat data contract.
+- Document-number masking (US-01's DoD line, US-03's own requirement) is still
+  unimplemented anywhere — intentionally deferred to Phase 8 (US-03), since masking
+  mainly matters once the number is displayed read-only in the summary. Tracked here so
+  it isn't lost.
+- Next: implement US-02's real plan list (Phase 7) against `CountryContentService.getPlans()`.
 
 ## Phase tracker
 
@@ -46,6 +50,7 @@
 | 3 — Additional technical ADRs | ADR-0002 Accepted |
 | 4 — Strapi content-types & seed | Done, verified |
 | 5 — Angular base scaffolding | Done, verified |
+| 6 — US-01 implementation | Done, verified |
 | 5 — Angular base scaffolding | Not started |
 | 6 — US-01 implementation | Not started |
 | 7 — US-02 implementation | Not started |

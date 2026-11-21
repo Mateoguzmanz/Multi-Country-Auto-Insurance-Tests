@@ -1,4 +1,98 @@
-<section>
+<section class="quote-form-page">
   <h1>Step 1 — Policyholder and vehicle data</h1>
-  <p>Placeholder for US-01. The real dynamic form is built in a later phase.</p>
+
+  @if (loading()) {
+    <div class="quote-form-page__status" role="status" aria-live="polite">
+      <p>Loading form fields…</p>
+    </div>
+  } @else if (error(); as errorMessage) {
+    <div class="quote-form-page__status quote-form-page__status--error" role="alert">
+      <p>We couldn't load the form: {{ errorMessage }}</p>
+      <button type="button" (click)="retry()">Retry</button>
+    </div>
+  } @else if (isEmpty()) {
+    <div class="quote-form-page__status" role="status">
+      <p>No fields are configured for this country yet. Please contact the business team.</p>
+    </div>
+  } @else if (form(); as formGroup) {
+    <form class="quote-form-page__form" [formGroup]="formGroup" (ngSubmit)="onSubmit()" novalidate>
+      @for (field of fields(); track field.id) {
+        <div class="quote-form-page__field">
+          @if (hasMisconfiguredSelect(field)) {
+            <p class="quote-form-page__field-config-error" role="alert">
+              "{{ field.label }}" is misconfigured — contact the business team.
+            </p>
+          } @else {
+            <label [for]="'field-' + field.key">
+              {{ field.label }}
+              @if (field.required) {
+                <span aria-hidden="true">*</span>
+              }
+            </label>
+
+            @switch (field.type) {
+              @case ('text') {
+                <input
+                  [id]="'field-' + field.key"
+                  type="text"
+                  [formControlName]="field.key"
+                  [attr.aria-describedby]="describedBy(field)"
+                  [attr.aria-invalid]="showError(field)"
+                />
+              }
+              @case ('number') {
+                <input
+                  [id]="'field-' + field.key"
+                  type="number"
+                  [formControlName]="field.key"
+                  [attr.aria-describedby]="describedBy(field)"
+                  [attr.aria-invalid]="showError(field)"
+                />
+              }
+              @case ('date') {
+                <input
+                  [id]="'field-' + field.key"
+                  type="date"
+                  [formControlName]="field.key"
+                  [attr.aria-describedby]="describedBy(field)"
+                  [attr.aria-invalid]="showError(field)"
+                />
+              }
+              @case ('checkbox') {
+                <input
+                  [id]="'field-' + field.key"
+                  type="checkbox"
+                  [formControlName]="field.key"
+                  [attr.aria-describedby]="describedBy(field)"
+                  [attr.aria-invalid]="showError(field)"
+                />
+              }
+              @case ('select') {
+                <select
+                  [id]="'field-' + field.key"
+                  [formControlName]="field.key"
+                  [attr.aria-describedby]="describedBy(field)"
+                  [attr.aria-invalid]="showError(field)"
+                >
+                  <option value="" disabled>Select…</option>
+                  @for (option of field.options; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              }
+            }
+
+            @if (field.helpText) {
+              <p class="quote-form-page__help" [id]="helpId(field)">{{ field.helpText }}</p>
+            }
+            @if (showError(field)) {
+              <p class="quote-form-page__error" [id]="errorId(field)" role="alert">{{ field.errorMessage }}</p>
+            }
+          }
+        </div>
+      }
+
+      <button type="submit" [disabled]="!canContinue()">Continue</button>
+    </form>
+  }
 </section>
