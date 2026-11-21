@@ -50,6 +50,12 @@
     },
     "options": {
       "type": "json"
+    },
+    "dependsOnKey": {
+      "type": "string"
+    },
+    "validationByOption": {
+      "type": "json"
     }
   }
 }

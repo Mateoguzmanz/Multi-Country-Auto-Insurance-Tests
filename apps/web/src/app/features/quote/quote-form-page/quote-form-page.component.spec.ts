@@ -4,7 +4,12 @@ import { FormControl } from '@angular/forms';
 import { provideRouter } from '@angular/router';
 import { CountryContentService, type CountryContentState } from '../../../core/services/country-content.service';
 import type { FormFieldEntry } from '../../../core/models/form-field.model';
-import { buildValidators, legalAgeValidator, QuoteFormPageComponent } from './quote-form-page.component';
+import {
+  buildValidators,
+  legalAgeValidator,
+  QuoteFormPageComponent,
+  resolveConditionalRule,
+} from './quote-form-page.component';
 
 function makeField(overrides: Partial<FormFieldEntry> = {}): FormFieldEntry {
   return {
@@ -20,6 +25,8 @@ function makeField(overrides: Partial<FormFieldEntry> = {}): FormFieldEntry {
     order: 1,
     country: 'CO',
     options: null,
+    dependsOnKey: null,
+    validationByOption: null,
     ...overrides,
   };
 }
@@ -82,6 +89,37 @@ describe('buildValidators', () => {
   });
 });
 
+describe('resolveConditionalRule', () => {
+  const documentNumberField = makeField({
+    key: 'documentNumber',
+    dependsOnKey: 'documentType',
+    validationByOption: {
+      RUT: { pattern: '^[0-9]{7,8}-[0-9Kk]$', errorMessage: 'Ingresa un RUT chileno válido.' },
+      PASSPORT: { pattern: '^[A-Za-z0-9]{6,12}$', errorMessage: 'Ingresa un número de pasaporte válido.' },
+    },
+  });
+
+  it('returns null when the field has no dependency', () => {
+    expect(resolveConditionalRule(makeField(), 'RUT')).toBeNull();
+  });
+
+  it('returns null when the sibling has no value yet', () => {
+    expect(resolveConditionalRule(documentNumberField, '')).toBeNull();
+    expect(resolveConditionalRule(documentNumberField, null)).toBeNull();
+  });
+
+  it('returns null when the sibling value has no matching rule', () => {
+    expect(resolveConditionalRule(documentNumberField, 'UNKNOWN')).toBeNull();
+  });
+
+  it('returns the matching rule for the sibling value', () => {
+    expect(resolveConditionalRule(documentNumberField, 'RUT')).toEqual({
+      pattern: '^[0-9]{7,8}-[0-9Kk]$',
+      errorMessage: 'Ingresa un RUT chileno válido.',
+    });
+  });
+});
+
 describe('QuoteFormPageComponent', () => {
   function createComponent(fieldsState: CountryContentState<FormFieldEntry[]>) {
     const fieldsSignal = signal(fieldsState);
@@ -119,5 +157,44 @@ describe('QuoteFormPageComponent', () => {
     const field = makeField({ type: 'text', options: null });
 
     expect(fixture.componentInstance.hasMisconfiguredSelect(field)).toBe(false);
+  });
+
+  it('re-validates a dependent field live when the sibling field it depends on changes', () => {
+    const documentTypeField = makeField({
+      key: 'documentType',
+      type: 'select',
+      options: [
+        { label: 'RUT', value: 'RUT' },
+        { label: 'Pasaporte', value: 'PASSPORT' },
+      ],
+    });
+    const documentNumberField = makeField({
+      key: 'documentNumber',
+      dependsOnKey: 'documentType',
+      validation: { pattern: '^[0-9]{7,8}-[0-9Kk]$' },
+      validationByOption: {
+        RUT: { pattern: '^[0-9]{7,8}-[0-9Kk]$', errorMessage: 'Ingresa un RUT chileno válido.' },
+        PASSPORT: { pattern: '^[A-Za-z0-9]{6,12}$', errorMessage: 'Ingresa un número de pasaporte válido.' },
+      },
+    });
+
+    const fixture = createComponent({ data: [documentTypeField, documentNumberField], loading: false, error: null });
+    fixture.detectChanges();
+
+    const form = fixture.componentInstance.form();
+    const documentNumberControl = form?.controls['documentNumber'];
+    documentNumberControl?.setValue('AB123456');
+
+    form?.controls['documentType']?.setValue('RUT');
+    expect(documentNumberControl?.hasError('pattern')).toBe(true);
+    expect(fixture.componentInstance.effectiveErrorMessage(documentNumberField)).toBe(
+      'Ingresa un RUT chileno válido.',
+    );
+
+    form?.controls['documentType']?.setValue('PASSPORT');
+    expect(documentNumberControl?.valid).toBe(true);
+    expect(fixture.componentInstance.effectiveErrorMessage(documentNumberField)).toBe(
+      'Ingresa un número de pasaporte válido.',
+    );
   });
 });

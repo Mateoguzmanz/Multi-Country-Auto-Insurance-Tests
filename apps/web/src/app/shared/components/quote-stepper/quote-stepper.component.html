@@ -1,0 +1,46 @@
+<nav class="quote-stepper" [attr.aria-label]="ariaLabel()">
+  <ol class="quote-stepper__list">
+    @for (step of steps(); track step.key; let last = $last) {
+      <li class="quote-stepper__item">
+        @if (step.canNavigate) {
+          <a
+            [routerLink]="step.path"
+            class="quote-stepper__link"
+            [class.quote-stepper__link--active]="step.isCurrent"
+            [class.quote-stepper__link--done]="step.isDone"
+            [attr.aria-current]="step.isCurrent ? 'step' : null"
+          >
+            <span
+              class="quote-stepper__circle"
+              [class.quote-stepper__circle--done]="step.isDone"
+              [class.quote-stepper__circle--active]="step.isCurrent"
+            >
+              @if (step.isDone) {
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M5 13l4 4L19 7"
+                    stroke="currentColor"
+                    stroke-width="2.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              } @else {
+                {{ step.number }}
+              }
+            </span>
+            <span class="quote-stepper__label">{{ step.label }}</span>
+          </a>
+        } @else {
+          <span class="quote-stepper__link quote-stepper__link--disabled" aria-disabled="true">
+            <span class="quote-stepper__circle">{{ step.number }}</span>
+            <span class="quote-stepper__label">{{ step.label }}</span>
+          </span>
+        }
+      </li>
+      @if (!last) {
+        <div class="quote-stepper__connector" [class.quote-stepper__connector--done]="step.isDone"></div>
+      }
+    }
+  </ol>
+</nav>

@@ -17,6 +17,10 @@ describe('maskDocumentNumber', () => {
     expect(maskDocumentNumber('123-4', 'CL')).toBe('•••-4');
   });
 
+  it('does not force RUT-style grouping onto a CL passport number (it contains letters)', () => {
+    expect(maskDocumentNumber('AB123456', 'CL')).toBe('AB••••56');
+  });
+
   it('returns an empty string for an empty input', () => {
     expect(maskDocumentNumber('', 'CO')).toBe('');
   });

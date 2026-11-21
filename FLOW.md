@@ -16,7 +16,10 @@ project) and the git history.
    requirement rather than approximating it.
 2. **Skills work the same way.** `.claude/skills/project-conventions/SKILL.md` is a real,
    loadable skill (templates for specs/ADRs/reviews), not a prompt fragment copy-pasted
-   into every agent.
+   into every agent. A second skill, `.claude/skills/verification-first/SKILL.md`, was
+   added during post-delivery iteration once it was clear the project's single most
+   consequential process lesson — never trust a subagent's self-report alone — was worth
+   capturing as reusable project knowledge, not just repeated ad-hoc practice.
 3. **Sessions are inspectable and exportable.** Every subagent run's full transcript is
    saved locally and can be exported unedited (`logs/`), which is an explicit deliverable
    of this test — this is what let the orchestrator catch a stalled agent reporting false

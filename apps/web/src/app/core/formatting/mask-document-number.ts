@@ -23,8 +23,16 @@ function formatChileanRut(cleaned: string): string {
   return groups.length > 0 ? `${groups.join('.')}-${checkDigit}` : checkDigit;
 }
 
+// CL's `documentNumber` field accepts either a RUT or a passport number (see ADR-0002 /
+// the CL form-field seed) — only a RUT is actually grouped in 3s with a trailing check
+// digit. A passport number containing letters is displayed as entered instead of being
+// forced into a RUT-shaped grouping it was never in.
+function looksLikeRut(cleaned: string): boolean {
+  return /^[0-9]+$/.test(cleaned);
+}
+
 function formatForCountry(cleaned: string, country: CountryCode): string {
-  return country === 'CL' ? formatChileanRut(cleaned) : cleaned;
+  return country === 'CL' && looksLikeRut(cleaned) ? formatChileanRut(cleaned) : cleaned;
 }
 
 /**

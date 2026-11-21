@@ -8,6 +8,8 @@ import { fillValidCoStep1Form } from './co-step1-form';
 test.describe('Colombia — rejected payment (US-03)', () => {
   test('shows a clear error, returns to a retryable state, and keeps all entered data', async ({ page }) => {
     await page.goto('/');
+    // The app defaults to Spanish; this suite asserts the English app-chrome strings.
+    await page.getByRole('button', { name: 'English' }).click();
     await page.getByRole('button', { name: 'Colombia' }).click();
     await fillValidCoStep1Form(page);
     await page.getByRole('button', { name: 'Continue' }).click();

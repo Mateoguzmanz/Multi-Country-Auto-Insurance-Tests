@@ -14,6 +14,11 @@ type FormFieldOption = Record<string, string>;
 // type at each call site.
 type FormFieldValidation = Record<string, number | string>;
 
+// Flat, like FormFieldValidation above (same JSON-field index-signature constraint): the
+// validation keys (pattern, min, max, minLength, maxLength) plus optional helpText/
+// errorMessage overrides, all at the same level — not nested under a `validation` key.
+type FormFieldConditionalRule = Record<string, string | number>;
+
 interface FormFieldSeed {
   key: string;
   label: string;
@@ -25,6 +30,8 @@ interface FormFieldSeed {
   errorMessage: string;
   validation?: FormFieldValidation;
   options?: FormFieldOption[];
+  dependsOnKey?: string;
+  validationByOption?: Record<string, FormFieldConditionalRule>;
 }
 
 const currentYear = new Date().getFullYear();
@@ -217,14 +224,29 @@ const CL_FORM_FIELDS: FormFieldSeed[] = [
   },
   {
     key: 'documentNumber',
-    label: 'RUT',
+    label: 'Número de documento',
     type: 'text',
     required: true,
     order: 3,
     country: 'CL',
-    helpText: 'Formato: 12.345.678-9.',
-    errorMessage: 'Ingresa un RUT chileno válido.',
-    validation: { pattern: '^[0-9]{7,8}-[0-9Kk]$' },
+    helpText: 'Selecciona primero el tipo de documento.',
+    errorMessage: 'Ingresa un número de documento válido.',
+    // Base rule used only before `documentType` has a value — once it does,
+    // `validationByOption` below takes over (see `dependsOnKey`).
+    validation: { pattern: '^([0-9]{7,8}-[0-9Kk]|[A-Za-z0-9]{6,12})$' },
+    dependsOnKey: 'documentType',
+    validationByOption: {
+      RUT: {
+        pattern: '^[0-9]{7,8}-[0-9Kk]$',
+        helpText: 'Formato: 12345678-9 (sin puntos).',
+        errorMessage: 'Ingresa un RUT chileno válido.',
+      },
+      PASSPORT: {
+        pattern: '^[A-Za-z0-9]{6,12}$',
+        helpText: 'Ingresa el número de pasaporte tal como aparece en el documento.',
+        errorMessage: 'Ingresa un número de pasaporte válido.',
+      },
+    },
   },
   {
     key: 'dateOfBirth',

@@ -10,8 +10,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
+import { translate, type TranslationKey } from '../../../core/i18n/translations';
 import { CountryContentService } from '../../../core/services/country-content.service';
 import { CountryStore } from '../../../core/state/country.store';
+import { LanguageStore } from '../../../core/state/language.store';
 import { SimulatedPaymentService } from '../../../core/services/simulated-payment.service';
 import { WizardStore } from '../../../core/state/wizard.store';
 import { maskDocumentNumber } from '../../../core/formatting/mask-document-number';
@@ -42,9 +44,14 @@ export class QuoteSummaryPageComponent {
   private readonly wizardStore = inject(WizardStore);
   private readonly countryContentService = inject(CountryContentService);
   private readonly countryStore = inject(CountryStore);
+  private readonly languageStore = inject(LanguageStore);
   private readonly simulatedPaymentService = inject(SimulatedPaymentService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+
+  t(key: TranslationKey): string {
+    return translate(key, this.languageStore.language());
+  }
 
   private readonly termsState = this.countryContentService.getTerms();
 
@@ -82,6 +89,12 @@ export class QuoteSummaryPageComponent {
 
   readonly isSubmitting = computed(() => this.paymentStatus() === 'submitting');
   readonly isApproved = computed(() => this.paymentStatus() === 'approved');
+
+  readonly today = computed(() => {
+    const country = this.country();
+    const locale = country ? LOCALE_BY_COUNTRY[country] : LOCALE_BY_COUNTRY.CO;
+    return new Date().toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
+  });
 
   readonly approvedQuoteNumber = computed(() => {
     const result = this.paymentResult();
@@ -140,6 +153,15 @@ export class QuoteSummaryPageComponent {
 
   retryTerms(): void {
     this.countryContentService.refetchTerms();
+  }
+
+  downloadReceipt(): void {
+    window.print();
+  }
+
+  startNewQuote(): void {
+    this.wizardStore.reset();
+    this.router.navigate(['/quote/form']);
   }
 
   pay(simulateFailure = false): void {

@@ -1,4 +1,28 @@
-/* Global baseline — component styles handle everything else. */
+/* Global baseline and design tokens — component styles handle everything else. */
+
+:root {
+  --color-navy: #16284a;
+  --color-navy-dark: #163c6b;
+  --color-coral: #ff6b4a;
+  --color-coral-hover: #ff5733;
+  --color-success: #1e9e6b;
+  --color-success-bg: #eafaf2;
+  --color-success-text: #116942;
+  --color-error: #d64545;
+  --color-error-bg: #fbeaea;
+  --color-error-text: #7a1f1f;
+  --color-bg: #f5f6fa;
+  --color-surface: #fcfcfd;
+  --color-border: #e3e6ec;
+  --color-border-strong: #c9d2e3;
+  --color-text: #15171c;
+  --color-text-muted: #5b6472;
+  --color-text-faint: #8a93a3;
+  --color-link: #1d4e89;
+  --color-link-hover: #163c6b;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
 
 *,
 *::before,
@@ -8,12 +32,45 @@
 
 body {
   margin: 0;
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
-  color: #1a1a1a;
-  background: #fff;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+a {
+  color: var(--color-link);
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: page-enter 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none !important;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.32s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
 }

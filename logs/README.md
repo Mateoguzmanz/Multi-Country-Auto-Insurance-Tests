@@ -30,3 +30,23 @@ test. This is a deliberate, disclosed decision (see `README.md`'s "Requirements 
 fully met" section), not an oversight: every decision the main session made is still
 fully traceable through `docs/STATE.md` (the append-only decision log), the per-story
 reviews in `docs/reviews/`, and `docs/traceability.md`.
+
+## `post-delivery-session-summary.md` — the orchestrator log for the post-delivery phase
+
+After the 14-phase build above was complete and the repository already shared, the same
+orchestrator session continued with further, explicitly-requested iteration (design
+polish, dynamic-form robustness fixes, a new cross-field validation capability, and a
+runtime EN/ES UI-language toggle). The user asked for that follow-up conversation to be
+added to `logs/` too, having noticed it also contains the same personal information
+(name, email, account identifiers) throughout — for the identical reason given above,
+the raw transcript is not included.
+
+`post-delivery-session-summary.md` plays the role the raw orchestrator transcript would
+have played for this phase, in the same way `docs/STATE.md` + `docs/reviews/` +
+`docs/traceability.md` already stand in for the original build's excluded orchestrator
+log: it's an **authored summary**, written from scratch by the orchestrator with zero
+personal information, covering what changed and the decisions behind it. It is not a
+redacted or edited version of the original log — it is new writing, so it carries none
+of the original log's privacy risk by construction, rather than by attempted cleanup of
+it. The corresponding entries in `docs/STATE.md`'s decision log are the quick-reference
+version of the same information.

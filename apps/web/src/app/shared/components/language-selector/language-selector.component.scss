@@ -1,0 +1,30 @@
+.language-selector {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 2px;
+
+  &__option {
+    border: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: transparent;
+    color: #c9d2e3;
+    font-weight: 600;
+    font-size: 13px;
+    font-family: inherit;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-navy-dark);
+      outline-offset: 2px;
+    }
+
+    &--active {
+      background: #ffffff;
+      color: var(--color-navy);
+    }
+  }
+}

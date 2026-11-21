@@ -1,7 +1,9 @@
 import { Component, computed, effect, inject, untracked } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { translate, type TranslationKey } from '../../../core/i18n/translations';
 import { CountryContentService } from '../../../core/services/country-content.service';
 import { CountryStore } from '../../../core/state/country.store';
+import { LanguageStore } from '../../../core/state/language.store';
 import { WizardStore } from '../../../core/state/wizard.store';
 import {
   applySimulatedPricingRule,
@@ -55,7 +57,7 @@ function toViewModel(entry: PlanEntry, pricingInput: SimulatedPricingRuleInput, 
 
 @Component({
   selector: 'app-quote-plans-page',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './quote-plans-page.component.html',
   styleUrl: './quote-plans-page.component.scss',
 })
@@ -63,7 +65,12 @@ export class QuotePlansPageComponent {
   private readonly countryContentService = inject(CountryContentService);
   private readonly countryStore = inject(CountryStore);
   private readonly wizardStore = inject(WizardStore);
+  private readonly languageStore = inject(LanguageStore);
   private readonly router = inject(Router);
+
+  t(key: TranslationKey): string {
+    return translate(key, this.languageStore.language());
+  }
 
   private readonly plansState = this.countryContentService.getPlans();
 
@@ -87,6 +94,14 @@ export class QuotePlansPageComponent {
   });
 
   constructor() {
+    // Once a payment is approved the quote is locked — there's no way back to change the
+    // plan, only starting a new quote (see `QuoteSummaryPageComponent.startNewQuote`).
+    effect(() => {
+      if (this.wizardStore.isApproved()) {
+        this.router.navigate(['/quote/summary']);
+      }
+    });
+
     // Re-validates a persisted selection against the freshly fetched active+published
     // list whenever that list (re)loads — e.g. returning from the summary step or
     // re-entering after a stale sessionStorage restore. `untracked` keeps this from

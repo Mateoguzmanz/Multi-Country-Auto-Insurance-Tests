@@ -1,5 +1,6 @@
-import { Injectable, effect, signal } from '@angular/core';
+import { Injectable, computed, effect, signal } from '@angular/core';
 import { CountryStore } from './country.store';
+import { projectReservedStep1Fields } from '../forms/project-reserved-step1-fields';
 import type { Step1FormValue } from '../models/form-field.model';
 import type {
   PaymentStatus,
@@ -25,6 +26,17 @@ export class WizardStore {
   private readonly stateSignal = signal<WizardState>(readStoredState() ?? createInitialState());
 
   readonly state = this.stateSignal.asReadonly();
+
+  // Derived step-completion flags used by the wizard stepper to decide which steps are
+  // safe to jump to directly (a step is only navigable once reached, never skipped ahead).
+  readonly isStep1Complete = computed(
+    () => projectReservedStep1Fields(this.stateSignal().step1.value) !== null,
+  );
+  readonly isStep2Complete = computed(() => this.stateSignal().selectedPlan !== null);
+
+  // Once a payment is approved the whole quote is locked: there is no way back to steps 1
+  // or 2, only starting an entirely new quote (see `reset()`).
+  readonly isApproved = computed(() => this.stateSignal().payment.status === 'approved');
 
   constructor(private readonly countryStore: CountryStore) {
     effect(() => {

@@ -1,0 +1,20 @@
+<div class="language-selector" role="group" [attr.aria-label]="ariaLabel()">
+  <button
+    type="button"
+    class="language-selector__option"
+    [class.language-selector__option--active]="language() === 'en'"
+    [attr.aria-pressed]="language() === 'en'"
+    (click)="selectLanguage('en')"
+  >
+    English
+  </button>
+  <button
+    type="button"
+    class="language-selector__option"
+    [class.language-selector__option--active]="language() === 'es'"
+    [attr.aria-pressed]="language() === 'es'"
+    (click)="selectLanguage('es')"
+  >
+    Español
+  </button>
+</div>

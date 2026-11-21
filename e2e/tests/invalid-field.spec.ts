@@ -4,6 +4,8 @@ import { fillValidCoStep1Form } from './co-step1-form';
 test.describe('Colombia — invalid-field scenario (US-01)', () => {
   test('shows the configured error message and blocks advancing to the plans step', async ({ page }) => {
     await page.goto('/');
+    // The app defaults to Spanish; this suite asserts the English app-chrome strings.
+    await page.getByRole('button', { name: 'English' }).click();
     await page.getByRole('button', { name: 'Colombia' }).click();
     await expect(page).toHaveURL(/\/quote\/form$/);
 

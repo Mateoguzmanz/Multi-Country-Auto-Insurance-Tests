@@ -2,7 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, Signal, effect, inject, signal } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { translate } from '../i18n/translations';
 import { CountryStore } from '../state/country.store';
+import { LanguageStore } from '../state/language.store';
 import type { CountryCode } from '../models/country.model';
 import type { FormFieldEntry } from '../models/form-field.model';
 import type { PlanEntry } from '../models/plan.model';
@@ -15,14 +17,22 @@ export interface CountryContentState<T> {
   readonly error: string | null;
 }
 
-function noCountrySelectedState<T>(): CountryContentState<T> {
-  return { data: null, loading: false, error: 'No country selected.' };
-}
-
 @Injectable({ providedIn: 'root' })
 export class CountryContentService {
   private readonly http = inject(HttpClient);
   private readonly countryStore = inject(CountryStore);
+  private readonly languageStore = inject(LanguageStore);
+
+  private noCountrySelectedState<T>(): CountryContentState<T> {
+    return { data: null, loading: false, error: translate('noCountrySelected', this.languageStore.language()) };
+  }
+
+  private toErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    return translate('failedToLoadContent', this.languageStore.language());
+  }
 
   private readonly formFieldsRefresh = signal(0);
   private readonly plansRefresh = signal(0);
@@ -103,7 +113,7 @@ export class CountryContentService {
     request: (country: CountryCode) => Observable<T>,
     refresh: Signal<number>,
   ): Signal<CountryContentState<T>> {
-    const state = signal<CountryContentState<T>>(noCountrySelectedState<T>());
+    const state = signal<CountryContentState<T>>(this.noCountrySelectedState<T>());
     let fetchedForCountry: CountryCode | null = null;
     let fetchedForRefreshToken: number | null = null;
 
@@ -114,7 +124,7 @@ export class CountryContentService {
       if (!country) {
         fetchedForCountry = null;
         fetchedForRefreshToken = null;
-        state.set(noCountrySelectedState<T>());
+        state.set(this.noCountrySelectedState<T>());
         return;
       }
 
@@ -129,17 +139,10 @@ export class CountryContentService {
       request(country).subscribe({
         next: (data) => state.set({ data, loading: false, error: null }),
         error: (error: unknown) =>
-          state.set({ data: null, loading: false, error: toErrorMessage(error) }),
+          state.set({ data: null, loading: false, error: this.toErrorMessage(error) }),
       });
     });
 
     return state.asReadonly();
   }
-}
-
-function toErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return 'Failed to load content from the CMS.';
 }

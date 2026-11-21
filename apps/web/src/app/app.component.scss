@@ -1,0 +1,30 @@
+.app-header {
+  background: var(--color-navy);
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__brand-name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 20px;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  &__selectors {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}

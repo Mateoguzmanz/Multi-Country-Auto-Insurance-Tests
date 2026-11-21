@@ -497,6 +497,7 @@ export interface ApiFormFieldFormField extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    dependsOnKey: Schema.Attribute.String;
     errorMessage: Schema.Attribute.String & Schema.Attribute.Required;
     helpText: Schema.Attribute.String;
     key: Schema.Attribute.String & Schema.Attribute.Required;
@@ -519,6 +520,7 @@ export interface ApiFormFieldFormField extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     validation: Schema.Attribute.JSON;
+    validationByOption: Schema.Attribute.JSON;
   };
 }
 

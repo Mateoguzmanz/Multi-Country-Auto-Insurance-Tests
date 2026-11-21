@@ -16,6 +16,16 @@ export interface FormFieldValidation {
   pattern?: string;
 }
 
+// A field's rules can vary with another field's current value — e.g. CL's `documentNumber`
+// validates differently depending on whether `documentType` is RUT or a passport. Keyed by
+// the controlling field's option `value`; any attribute left out falls back to the field's
+// own base `validation`/`helpText`/`errorMessage`. Flat (not `{ validation: {...} }`) so it
+// can be passed anywhere a `FormFieldValidation` is expected.
+export interface FormFieldConditionalRule extends FormFieldValidation {
+  helpText?: string;
+  errorMessage?: string;
+}
+
 export interface FormFieldAttributes {
   key: string;
   label: string;
@@ -27,6 +37,8 @@ export interface FormFieldAttributes {
   order: number;
   country: CountryCode;
   options: FormFieldOption[] | null;
+  dependsOnKey: string | null;
+  validationByOption: Record<string, FormFieldConditionalRule> | null;
 }
 
 export type FormFieldEntry = StrapiRecord<FormFieldAttributes>;
