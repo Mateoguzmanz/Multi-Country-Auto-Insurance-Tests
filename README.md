@@ -86,8 +86,9 @@ npx playwright test
 ## Requirements not fully met (and why)
 
 - **The main orchestrator session log is not included in `logs/`.** The test asks for
-  "unedited logs ... of your sessions with the agents." The 8 subagent session
-  transcripts *are* included in full, unedited, in `logs/subagents/`. The main
+  "unedited logs ... of your sessions with the agents." The 9 subagent session
+  transcripts *are* included in full, unedited, in `logs/subagents/` (see
+  `logs/README.md` for which subagent/phase each one is). The main
   orchestrating session's own log is excluded because it contains the project owner's
   personal email address and Anthropic account identifiers in plain text throughout,
   and this repository is public — including it would expose that information to anyone
