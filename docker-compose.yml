@@ -1,0 +1,42 @@
+services:
+  cms:
+    build:
+      context: ./apps/cms
+    ports:
+      - '1337:1337'
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: '1337'
+      # Fictitious dev-only defaults so the whole project starts with a single command
+      # and no extra setup; override any of them via a root .env file (see
+      # .env.example) if needed. Used only to sign local admin sessions and tokens —
+      # never meant for, or exposed to, production.
+      APP_KEYS: ${APP_KEYS:-dev-app-key-one,dev-app-key-two,dev-app-key-three,dev-app-key-four}
+      API_TOKEN_SALT: ${API_TOKEN_SALT:-dev-api-token-salt}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET:-dev-admin-jwt-secret}
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT:-dev-transfer-token-salt}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-dev-encryption-key}
+      DATABASE_CLIENT: sqlite
+      DATABASE_FILENAME: .tmp/data.db
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:1337/api/form-fields', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 24
+
+  web:
+    build:
+      context: ./apps/web
+    ports:
+      - '4200:80'
+    depends_on:
+      cms:
+        condition: service_healthy

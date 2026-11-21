@@ -7,12 +7,13 @@
 
 ## Current phase
 
-**Phase 11 — Docker Compose & seed automation** (starting next)
+**Phase 12 — Review consolidation & traceability** (starting next)
 
 ## Decisions log
 
 | Date | Decision | Status | Notes |
 |---|---|---|---|
+| 2026-11-21 | Phase 11 — `docker-compose.yml` + `apps/cms/Dockerfile` + `apps/web/Dockerfile`/`nginx.conf`: the whole project starts with `docker compose up` | **Verified and approved** | Built directly (no subagent — infra work spanning both apps plus root compose didn't fit any single defined subagent role cleanly). Docker Desktop wasn't running; started it and waited for the daemon. Actually ran `docker compose up --build`, not just wrote the files: confirmed Strapi seeds fresh on every `up` (no DB volume, by design — guarantees seed data is always present, never stale), confirmed exactly the same 26/8/2 form-field/plan/terms counts as the dev-server runs, confirmed write endpoints still return 403 inside the container, confirmed the Angular SPA (served via nginx) returns 200 on a deep-linked route (`/quote/form`) thanks to the `try_files` fallback, and re-ran a full `down` + `up` cycle to confirm the fresh-seed behavior holds. Containers stopped cleanly afterward (`docker compose down`) |
 | 2026-11-21 | Phase 10 — 11 unit spec files (67 tests, Vitest+TestBed) + 3 Playwright e2e specs (happy-path CO, invalid-field, rejected-payment), all for real | **Verified and approved** | Built by `test-writer`. Independently re-ran both suites myself from a cold start (no servers running beforehand): `ng test` → 67/67 passed; `playwright test` → 3/3 passed, Strapi auto-started/torn down cleanly by `global-setup.ts`, confirmed no orphaned processes afterward. Read the e2e specs directly — they assert real things (raw document number never appears anywhere in the summary DOM, not just that the masked one does; post-approval back/forward navigation never resurrects a payable summary; rejected-payment preserves step-1 data checked by navigating back to it) |
 | 2026-11-21 | Real bug found and fixed by `test-writer`: `new Date('YYYY-MM-DD')` parses as UTC midnight, which silently shifts the calendar date back one day when read with local getters in any timezone behind UTC — including Colombia and Chile, hitting both the legal-age validator (US-01) and the pricing rule's driver-age factor (US-02) | **Fixed and verified** | Added `core/formatting/parse-date-only.ts` (parses `YYYY-MM-DD` as local midnight instead), used at both call sites. Independently confirmed the fix is in place and the relevant tests pass |
 | 2026-11-21 | Reversed the Phase 8 "no user-facing simulate-failure control" decision — added a second, clearly-labeled button ("Simulate a declined payment") next to Pay, and `SimulatedPaymentService.submitPayment` now takes an optional `simulateFailure` flag | **Approved by user** | User asked to make all 4 of US-03's Gherkin scenarios demonstrable by a human using the running app, not only provable via test code, given the whole payment step is already an explicitly simulated mock gateway (not a real one) per the test's own rules — see `specs/US-03-summary-payment.md`'s "Phase 10 correction" resolution. `test-phase10` (already running) was notified mid-flight to cover this scenario with a real Playwright e2e click-through instead of relying solely on a service mock |
@@ -56,8 +57,12 @@
   the Playwright e2e suite exercised the real pay flow, focus-dependent behavior aside
   (Playwright doesn't assert focus by default; if that specific detail ever needs
   confirming, it's the one remaining gap, otherwise consider it resolved by Phase 10).
-- Next: Phase 11 — Docker Compose + seed automation (single-command startup, per the
-  test's environment requirement).
+- Next: Phase 12 — consolidate code-review evidence per story into `docs/reviews/`, and
+  build the full user-story → spec → ADR → code → tests → review traceability table
+  (this largely already exists scattered across this file and the specs' Resolutions
+  sections; Phase 12 is about assembling it into one clear artifact).
+- Note for Phase 13 (README): Docker Desktop must be running before `docker compose up`
+  — call this out explicitly, since it's an easy thing for someone else to miss.
 
 ## Phase tracker
 
@@ -74,6 +79,7 @@
 | 8 — US-03 implementation | Done, verified (e2e closed the live-walkthrough gap) |
 | 9 — Accessibility/responsive/security pass | Done |
 | 10 — Testing (unit + e2e) | Done, verified |
+| 11 — Docker Compose & seed automation | Done, verified |
 | 5 — Angular base scaffolding | Not started |
 | 6 — US-01 implementation | Not started |
 | 7 — US-02 implementation | Not started |
