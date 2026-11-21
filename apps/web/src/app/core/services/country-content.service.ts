@@ -1,0 +1,115 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, Signal, effect, inject, signal } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { CountryStore } from '../state/country.store';
+import type { CountryCode } from '../models/country.model';
+import type { FormFieldEntry } from '../models/form-field.model';
+import type { PlanEntry } from '../models/plan.model';
+import type { StrapiCollectionResponse } from '../models/strapi.model';
+import type { TermsAndConditionEntry } from '../models/terms.model';
+
+export interface CountryContentState<T> {
+  readonly data: T | null;
+  readonly loading: boolean;
+  readonly error: string | null;
+}
+
+function noCountrySelectedState<T>(): CountryContentState<T> {
+  return { data: null, loading: false, error: 'No country selected.' };
+}
+
+@Injectable({ providedIn: 'root' })
+export class CountryContentService {
+  private readonly http = inject(HttpClient);
+  private readonly countryStore = inject(CountryStore);
+
+  private readonly formFieldsState = this.createCountryScopedState<FormFieldEntry[]>((country) =>
+    this.http
+      .get<StrapiCollectionResponse<FormFieldEntry>>(`${environment.strapiApiBaseUrl}/form-fields`, {
+        params: new HttpParams()
+          .set('filters[country][$eq]', country)
+          .set('sort', 'order:asc,id:asc')
+          .set('pagination[pageSize]', '100'),
+      })
+      .pipe(map((response) => response.data)),
+  );
+
+  private readonly plansState = this.createCountryScopedState<PlanEntry[]>((country) =>
+    this.http
+      .get<StrapiCollectionResponse<PlanEntry>>(`${environment.strapiApiBaseUrl}/plans`, {
+        params: new HttpParams()
+          .set('filters[country][$eq]', country)
+          .set('filters[active][$eq]', 'true')
+          .set('sort', 'order:asc,id:asc')
+          .set('populate', '*')
+          .set('pagination[pageSize]', '100'),
+      })
+      .pipe(map((response) => response.data)),
+  );
+
+  private readonly termsState = this.createCountryScopedState<TermsAndConditionEntry | null>((country) =>
+    this.http
+      .get<StrapiCollectionResponse<TermsAndConditionEntry>>(
+        `${environment.strapiApiBaseUrl}/terms-and-conditions`,
+        {
+          params: new HttpParams()
+            .set('filters[country][$eq]', country)
+            .set('sort', 'id:asc')
+            .set('pagination[pageSize]', '1'),
+        },
+      )
+      .pipe(map((response) => response.data[0] ?? null)),
+  );
+
+  getFormFields(): Signal<CountryContentState<FormFieldEntry[]>> {
+    return this.formFieldsState;
+  }
+
+  getPlans(): Signal<CountryContentState<PlanEntry[]>> {
+    return this.plansState;
+  }
+
+  getTerms(): Signal<CountryContentState<TermsAndConditionEntry | null>> {
+    return this.termsState;
+  }
+
+  private createCountryScopedState<T>(
+    request: (country: CountryCode) => Observable<T>,
+  ): Signal<CountryContentState<T>> {
+    const state = signal<CountryContentState<T>>(noCountrySelectedState<T>());
+    let fetchedForCountry: CountryCode | null = null;
+
+    effect(() => {
+      const country = this.countryStore.country();
+
+      if (!country) {
+        fetchedForCountry = null;
+        state.set(noCountrySelectedState<T>());
+        return;
+      }
+
+      if (country === fetchedForCountry) {
+        return;
+      }
+
+      fetchedForCountry = country;
+      state.set({ data: null, loading: true, error: null });
+
+      request(country).subscribe({
+        next: (data) => state.set({ data, loading: false, error: null }),
+        error: (error: unknown) =>
+          state.set({ data: null, loading: false, error: toErrorMessage(error) }),
+      });
+    });
+
+    return state.asReadonly();
+  }
+}
+
+function toErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return 'Failed to load content from the CMS.';
+}

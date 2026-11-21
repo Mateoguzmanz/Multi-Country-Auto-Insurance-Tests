@@ -155,9 +155,9 @@ interface VehicleData {
   vehicleIdentifier: string; // country-specific label/validation, from Strapi form-field config
 }
 
-// Consumed from US-02's wizard state. Field names are provisional pending that spec.
+// Consumed from US-02's wizard state.
 interface SelectedPlan {
-  id: string;
+  id: number; // Strapi's real numeric id — corrected in Phase 5, see Resolutions below
   name: string;
   country: CountryCode;
   finalPrice: number;
@@ -278,3 +278,10 @@ interface SummaryStepState {
   `Step1FormValue`, read by reserved key (`fullName`, `documentType`, `documentNumber`,
   `email`, `phone`, `vehicleMake`, `vehicleModel`, `vehicleYear`, `vehicleIdentifier`),
   not a separately-defined shape.
+
+## Resolutions (Phase 5 correction, 2026-11-21)
+
+- **`SelectedPlan.id` corrected from `string` to `number`**: Strapi 5's real entity id is
+  numeric (`PlanEntry.id`), not a string; the original guess was wrong. Corrected once
+  `angular-builder` verified the live API in Phase 5. See US-02's matching correction
+  note.

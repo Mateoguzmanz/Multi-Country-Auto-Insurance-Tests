@@ -1,0 +1,20 @@
+<div class="country-selector" role="group" aria-label="Country selection">
+  <button
+    type="button"
+    class="country-selector__option"
+    [class.country-selector__option--active]="country() === 'CO'"
+    [attr.aria-pressed]="country() === 'CO'"
+    (click)="selectCountry('CO')"
+  >
+    Colombia
+  </button>
+  <button
+    type="button"
+    class="country-selector__option"
+    [class.country-selector__option--active]="country() === 'CL'"
+    [attr.aria-pressed]="country() === 'CL'"
+    (click)="selectCountry('CL')"
+  >
+    Chile
+  </button>
+</div>

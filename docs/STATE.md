@@ -7,12 +7,15 @@
 
 ## Current phase
 
-**Phase 5 — Angular base scaffolding** (starting next)
+**Phase 6 — US-01 implementation (real step-1 form)** (starting next)
 
 ## Decisions log
 
 | Date | Decision | Status | Notes |
 |---|---|---|---|
+| 2026-11-21 | Phase 5 — Angular `apps/web` scaffolded: standalone routing shell for the 3-step wizard, `CountryStore`/`WizardStore` (signals + `sessionStorage`), `CountryContentService` (country structurally cannot be omitted; explicit loading/error/data state) | **Verified and approved** | Built by `angular-builder`; this agent, unlike `strapi-architect`, actually ran `ng build`/`tsc --noEmit`/`ng serve` + curl and pasted real output — independently re-verified anyway (own `ng build` run clean, code read directly, zero `any` confirmed by grep) |
+| 2026-11-21 | Corrected US-01/02/03 Data contracts: Strapi 5's REST API returns attributes flat on the entity (`{id, documentId, ...fields}`), not nested under a v4-style `attributes` key; `SelectedPlan.id` is `number`, not `string` | **Approved** | Discovered by `angular-builder` against the live, already-seeded Strapi API; independently confirmed against this session's own earlier `curl` output from Phase 4. `apps/web/src/app/core/models/*.ts` is the source of truth going forward |
+| 2026-11-21 | `WizardStore` resets its whole state when `CountryStore`'s country changes after an initial selection | **Approved, kept in Phase 5** | Flagged by `angular-builder` as going slightly beyond "just the shape"; approved keeping it now since it's a direct, necessary consequence of ADR-0001 (country-scoped content) and US-03's already-approved "re-acceptance required on country change" resolution, not a new decision |
 | 2026-11-21 | Phase 4 — Strapi `apps/cms` scaffolded: `form-field`/`plan`/`terms-and-condition` content-types, `shared.plan-detail-item` component, idempotent seed bootstrap, Public role limited to `find`/`findOne` on the three content-types | **Verified and approved** | Built by `strapi-architect` subagent; the agent stalled mid-task reporting vague "waiting on monitor" status twice without a final report, so verification was done directly against the running SQLite dev DB instead of trusting its self-report — confirmed 26/8/2 seeded entries (×2 for draft+published rows) and exactly 6 Public-role permissions (find/findOne only, no write), no secrets committed (`.env` correctly gitignored) |
 | 2026-11-21 | Fixed a real bug found during re-verification: `apps/cms/src/seed/index.ts` failed to compile (`strapi develop` crashed on boot — "TypeScript compilation failed") because `seedIfEmpty<T extends Record<string, unknown>>` and the JSON-typed `validation`/`options` seed fields used named interfaces without index signatures, which don't structurally satisfy Strapi's generated `Data.Input`/`JSONValue` types | **Fixed and verified** | Replaced the one generic helper with three small per-content-type functions (`seedFormFieldsIfEmpty`/`seedPlansIfEmpty`/`seedTermsIfEmpty`) and changed `FormFieldValidation`/`FormFieldOption` from interfaces to `Record<string, ...>` types; re-verified end-to-end by actually booting `strapi develop` and `curl`-ing the live API: public `GET` returns the full seeded CO+CL data with HTTP 200, `POST`/`PUT` return HTTP 403 for the Public role |
 | 2026-11-21 | ADR-0002 — reserved semantic `key` convention bridges US-01's dynamic form with US-02/US-03's semantic field needs | **Accepted** | `docs/adr/0002-dynamic-form-rendering.md`; surfaced during spec reconciliation, not anticipated at Phase 0 |
@@ -29,9 +32,9 @@
 
 ## Open questions / next decision needed
 
-- None blocking. Next: `angular-builder` scaffolds `apps/web` (Phase 5) — standalone
-  Angular 21 app, routing for the 3-step wizard, and a `CountryContentService` that always
-  applies the ADR-0001 country filter.
+- None blocking. Next: implement US-01's real step-1 form (Phase 6) — dynamic
+  `FormGroup` built from `CountryContentService.getFormFields()`, validators mapped per
+  field, accessible labels/errors, against the now-corrected flat data contract.
 
 ## Phase tracker
 
@@ -42,6 +45,7 @@
 | 2 — Specs (US-01/02/03) | Approved |
 | 3 — Additional technical ADRs | ADR-0002 Accepted |
 | 4 — Strapi content-types & seed | Done, verified |
+| 5 — Angular base scaffolding | Done, verified |
 | 5 — Angular base scaffolding | Not started |
 | 6 — US-01 implementation | Not started |
 | 7 — US-02 implementation | Not started |

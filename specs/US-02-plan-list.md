@@ -142,10 +142,10 @@ interface StrapiPlanAttributes {
   country: CountryCode;
 }
 
-interface StrapiEntity<T> {
-  id: number;
-  attributes: T;
-}
+// Strapi 5's REST API returns attributes flat on the entity (id + documentId alongside
+// the fields), not nested under a v4-style `attributes` key — verified against the live
+// API; see this spec's Phase 5 correction note below.
+type StrapiEntity<T> = T & { id: number; documentId: string };
 
 interface StrapiCollectionResponse<T> {
   data: StrapiEntity<T>[];
@@ -280,3 +280,13 @@ interface PricingRuleOutput {
   [ADR-0002](../docs/adr/0002-dynamic-form-rendering.md)'s reserved-key convention —
   `driverAge` is derived from the `dateOfBirth` reserved field, `vehicleYear` and
   `vehicleUsage` are read directly from their reserved keys in US-01's `Step1FormValue`.
+
+## Resolutions (Phase 5 correction, 2026-11-21)
+
+- **Data contract shape corrected to match the real, running API**: `StrapiEntity<T>`
+  above assumed Strapi v4's `{id, attributes}` envelope. `angular-builder` verified the
+  live Strapi 5 API returns attributes flat on the entity and typed
+  `apps/web/src/app/core/models/plan.model.ts` (`PlanEntry = PlanAttributes & {id,
+  documentId}`) against the verified shape; this spec's Data contract is corrected to
+  match. `PlanViewModel.id`/`PlanEntry.id` is `number` (Strapi's real numeric id), so
+  downstream consumers (US-03's `SelectedPlan.id`) use `number`, not `string`.

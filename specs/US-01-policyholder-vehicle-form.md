@@ -145,10 +145,10 @@ interface FormFieldAttributes {
   options?: FormFieldOption[]; // present only when type === 'select'
 }
 
-interface FormFieldEntry {
-  id: number;
-  attributes: FormFieldAttributes;
-}
+// Strapi 5's REST API returns attributes flat on the entity (id + documentId alongside
+// the fields), not nested under a v4-style `attributes` key. Verified against the live
+// API in Phase 4/5 — see the Phase 5 correction note below.
+type FormFieldEntry = FormFieldAttributes & { id: number; documentId: string };
 
 // Front-end wizard state for step 1 (policyholder + vehicle data).
 // Keyed by each field's Strapi `key`; values are typed per FieldType at the
@@ -241,3 +241,13 @@ interface Step1State {
 - **Document masking format**: first 2 and last 2 characters visible, the rest replaced
   with `•`, country formatting reapplied around the mask — same algorithm as US-03's,
   applied here wherever the document number is shown outside the active edit field.
+
+## Resolutions (Phase 5 correction, 2026-11-21)
+
+- **Data contract shape corrected to match the real, running API**: the original
+  `FormFieldEntry { id, attributes: {...} }` shape assumed Strapi v4's response
+  envelope. `angular-builder` verified the live Strapi 5 API (already running with real
+  seed data) returns attributes flat on the entity, and typed
+  `apps/web/src/app/core/models/*.ts` against the verified real shape instead. This spec's
+  Data contract above is corrected to match; `apps/web/src/app/core/models/` is the
+  source of truth going forward if the two ever drift.
