@@ -7,12 +7,13 @@
 
 ## Current phase
 
-**Phase 9 — Accessibility/responsive/security cross-cutting pass** (starting next)
+**Phase 10 — Testing (unit + e2e)** (starting next)
 
 ## Decisions log
 
 | Date | Decision | Status | Notes |
 |---|---|---|---|
+| 2026-11-21 | Phase 9 — cross-cutting accessibility/responsive/security audit (`docs/reviews/non-functional-checklist.md`) | **Done, mostly code-verified** | Performed directly (no subagent) since it was a review pass over already-built code, not new feature work. Security: grep-audited for tokens (clean), re-confirmed Strapi Public permissions. Found and fixed 2 small polish gaps: empty global `styles.scss` (added box-sizing/body-margin baseline) and the leftover CLI default page title. Items depending on an actual click-through remain "pending live confirmation" due to the Chrome disconnect, same as Phase 8 |
 | 2026-11-21 | Phase 8 — US-03's summary & payment screen implemented: document masking, `ReservedStep1Fields` projection, `SimulatedPaymentService` (mockable, always-approves), quote-number generator, post-approval lock, terms acceptance | **Code-verified and approved; live walkthrough still pending** | Built by `angular-builder`, who was explicit that no Chrome browser was connected in its environment and did not fabricate a live walkthrough — verified instead by running the actual shipped masking/quote-number/projection modules directly (`npx tsx`) and by code inspection of the rejected-payment path. I independently re-derived the masking algorithm by hand against all 4 of the spec's worked examples (`10••••••32`, `12.•••.•••-9`, both ≤4-char cases) and confirmed exact matches; `tsc`/`ng build` re-run clean. My own attempt at a live browser walkthrough also failed — the Chrome extension was disconnected in this session too (confirmed via repeated `list_connected_browsers` checks, even after the user restarted Chrome) — so the live click-through (checkbox toggle, pay-button disable timing, focus management on approve/reject, responsive layout) remains unverified by observation; it will be exercised by the Playwright e2e suite in Phase 10, which should be treated as closing this gap |
 | 2026-11-21 | Fixed a real bug `angular-builder` flagged rather than hid: the terms checkbox could not be unchecked (`WizardStore` only had `acceptTerms`, no decline path) | **Fixed and approved** | Replaced `WizardStore.acceptTerms(version)` with `setTermsAccepted(accepted, version)` supporting both directions; sole call site (`quote-summary-page`) updated; `tsc`/`ng build` clean afterward |
 | 2026-11-21 | Phase 7 — US-02's real plan list implemented: `SIMULATED-PRICING-RULE-v1` as pure, independently-testable functions (`apps/web/src/app/core/pricing/simulated-pricing-rule.ts`), country-locale currency formatting, native-radio accessible selection, stale-selection re-validation on (re)entry | **Verified and approved** | Built by `angular-builder`; gave the most rigorous self-verification yet (hand-calculated pricing cross-checked against the rendered UI, a stale selection seeded directly into `sessionStorage` and confirmed cleared live, real keyboard arrow-key navigation, `es-CO` vs `es-CL` currency formatting visibly confirmed). Independently re-verified: code read (no `any`, correct `untracked`/`computed` usage, no repeat of the Phase 6 mutable-vs-signal bug), own `tsc`/`ng build` run clean, and a live spot-check in the browser (correct base prices, correct single `RECOMMENDED` badge, inactive plan excluded, selection + Continue enablement) | — US-01's real step-1 form implemented: dynamic typed `FormGroup` from live Strapi config, generic `Validators` mapping + custom `legalAgeValidator()` for `dateOfBirth`, misconfigured-`select` state, accessible labels/errors, `sessionStorage` rehydration | **Verified and approved** | Built by `angular-builder`; this agent gave an honest, itemized verification (including what it could *not* verify live, e.g. the misconfigured-select state has no real seed data to trigger it) and caught a real bug itself (`computed()` over `FormGroup.valid`, which mutates in place rather than emitting signal writes — fixed to a plain method). Independently re-verified in the browser myself: country switch renders the real 13-field CO form, legal-age validator fires with the exact configured error message, full valid fill enables Continue and navigates to `/quote/plans`, and browser back-navigation restores every value with no re-fetch |
@@ -48,7 +49,9 @@
   either by a manual pass once Chrome reconnects, or treated as covered once Phase 10's
   e2e suite exercises the full payment flow — don't mark this story fully "done" for
   grading purposes until one of those happens.
-- Next: Phase 9 (accessibility/responsive/security cross-cutting pass).
+- Next: Phase 10 — unit tests (pricing rule, masking, validators, stores) and the
+  Playwright e2e suite, which should also serve as the live confirmation for the
+  "pending live confirmation" items above.
 
 ## Phase tracker
 
@@ -63,6 +66,7 @@
 | 6 — US-01 implementation | Done, verified |
 | 7 — US-02 implementation | Done, verified |
 | 8 — US-03 implementation | Code-verified; live walkthrough pending (Chrome disconnected) |
+| 9 — Accessibility/responsive/security pass | Done |
 | 5 — Angular base scaffolding | Not started |
 | 6 — US-01 implementation | Not started |
 | 7 — US-02 implementation | Not started |
