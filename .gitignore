@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.angular/
+.env
+.env.local
+*.log
+npm-debug.log*
+
+# Strapi
+apps/cms/.tmp/
+apps/cms/.cache/
+apps/cms/build/
+apps/cms/exports/
+
+# Playwright
+e2e/test-results/
+e2e/playwright-report/
