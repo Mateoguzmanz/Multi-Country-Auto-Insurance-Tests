@@ -279,6 +279,23 @@ interface SummaryStepState {
   `email`, `phone`, `vehicleMake`, `vehicleModel`, `vehicleYear`, `vehicleIdentifier`),
   not a separately-defined shape.
 
+## Resolutions (Phase 10 correction, 2026-11-21)
+
+- **Simulated payment failure mechanism — superseding the resolution above.** Reversed:
+  the UI now exposes a second, clearly-labeled control next to "Pay" — "Simulate a
+  declined payment" — that drives the exact same flow but forces a `rejected` result.
+  Rationale for the reversal: the entire payment step is already an explicitly simulated
+  mock per the test's own rules (no real gateway is allowed at all), so a labeled
+  simulation control isn't "dev-only UI clutter" the way it would be in a product with a
+  real payment integration — it's an honest depiction of a mock/test gateway (the same
+  pattern real payment providers use in their own test/sandbox modes, e.g. a specific
+  test card number that always declines). The upside: every one of US-03's 4 Gherkin
+  scenarios, including "Rejected payment," is now demonstrable by a human simply using
+  the running app, not only provable by reading test code — directly relevant since part
+  of this engagement's evaluation is a human using the application itself. The
+  "Rejected payment" scenario is now covered primarily by a real Playwright e2e
+  click-through (`test-writer`, Phase 10) rather than only a service-level mock.
+
 ## Resolutions (Phase 5 correction, 2026-11-21)
 
 - **`SelectedPlan.id` corrected from `string` to `number`**: Strapi 5's real entity id is

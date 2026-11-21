@@ -112,9 +112,25 @@
       </section>
 
       <div class="quote-summary-page__pay">
-        <button type="button" [disabled]="!canPay()" (click)="pay()">
-          {{ isSubmitting() ? 'Processing…' : 'Pay' }}
-        </button>
+        <div class="quote-summary-page__pay-actions">
+          <button type="button" [disabled]="!canPay()" (click)="pay()">
+            {{ isSubmitting() ? 'Processing…' : 'Pay' }}
+          </button>
+
+          <button
+            type="button"
+            class="quote-summary-page__simulate-decline"
+            [disabled]="!canPay()"
+            (click)="pay(true)"
+          >
+            Simulate a declined payment
+          </button>
+        </div>
+
+        <p class="quote-summary-page__pay-note">
+          This is a test-mode payment gateway — no real charge ever occurs. Use "Simulate a
+          declined payment" to see how a rejected payment is handled.
+        </p>
 
         <div aria-live="polite">
           @if (isSubmitting()) {

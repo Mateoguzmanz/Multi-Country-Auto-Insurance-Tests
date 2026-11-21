@@ -142,7 +142,7 @@ export class QuoteSummaryPageComponent {
     this.countryContentService.refetchTerms();
   }
 
-  pay(): void {
+  pay(simulateFailure = false): void {
     if (!this.canPay()) {
       return;
     }
@@ -157,12 +157,15 @@ export class QuoteSummaryPageComponent {
     this.wizardStore.setPaymentResult(null);
 
     this.simulatedPaymentService
-      .submitPayment({
-        quoteDraftId: `${country}-${plan.id}`,
-        amount: plan.finalPrice,
-        currency: plan.currency,
-        country,
-      })
+      .submitPayment(
+        {
+          quoteDraftId: `${country}-${plan.id}`,
+          amount: plan.finalPrice,
+          currency: plan.currency,
+          country,
+        },
+        simulateFailure,
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {

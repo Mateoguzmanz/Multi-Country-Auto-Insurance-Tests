@@ -145,26 +145,53 @@
     flex-direction: column;
     gap: 0.5rem;
     align-items: flex-start;
+  }
+
+  &__pay-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
 
     button[type='button'] {
       padding: 0.6rem 1.25rem;
-      border: none;
       border-radius: 0.25rem;
-      background: #1a73e8;
-      color: #fff;
       font-weight: 600;
       cursor: pointer;
 
       &:disabled {
-        background: #a9c4ec;
         cursor: not-allowed;
+        opacity: 0.6;
       }
+    }
+
+    button:first-child {
+      border: none;
+      background: #1a73e8;
+      color: #fff;
 
       &:focus-visible {
         outline: 2px solid #0d47a1;
         outline-offset: 2px;
       }
     }
+  }
+
+  &__simulate-decline {
+    border: 1px solid #b42318;
+    background: #fff;
+    color: #b42318;
+
+    &:focus-visible {
+      outline: 2px solid #b42318;
+      outline-offset: 2px;
+    }
+  }
+
+  &__pay-note {
+    font-size: 0.8rem;
+    color: #555;
+    margin: 0;
   }
 
   &__error {
