@@ -1,13 +1,9 @@
-import type { Language } from '../models/language.model';
-
 // Static app-chrome copy only (buttons, headings, status messages this app's own templates
 // own) — Strapi-sourced business content (field labels/help/error text, plan copy, terms)
 // is intentionally never translated here; it stays in whatever language the business team
-// configured for that country. English is the default and must stay byte-for-byte identical
-// to what the e2e suite asserts against (it never switches language).
+// configured for that country.
 const EN = {
   countrySelectorAriaLabel: 'Country selection',
-  languageSelectorAriaLabel: 'Language selection',
   confirmCountryChange: 'Changing country will restart your current quote. Continue?',
   confirm: 'Confirm',
   cancel: 'Cancel',
@@ -94,99 +90,8 @@ const EN = {
   processingPayment: 'Processing your payment…',
 };
 
-const ES: Record<keyof typeof EN, string> = {
-  countrySelectorAriaLabel: 'Selección de país',
-  languageSelectorAriaLabel: 'Selección de idioma',
-  confirmCountryChange: 'Cambiar de país reiniciará tu cotización actual. ¿Deseas continuar?',
-  confirm: 'Confirmar',
-  cancel: 'Cancelar',
-  noCountrySelected: 'No se ha seleccionado ningún país.',
-  failedToLoadContent: 'No se pudo cargar el contenido desde el CMS.',
-
-  stepperAriaLabel: 'Progreso de la cotización',
-  stepYourDetails: 'Tus datos',
-  stepPlans: 'Planes',
-  stepSummary: 'Resumen y pago',
-
-  step1Title: 'Paso 1 — Datos del tomador y del vehículo',
-  loadingFormFields: 'Cargando los campos del formulario…',
-  loadFormErrorPrefix: 'No se pudo cargar el formulario: ',
-  retry: 'Reintentar',
-  noFieldsConfigured: 'Aún no hay campos configurados para este país. Contacta al equipo de negocio.',
-  fieldMisconfiguredSuffix: ' está mal configurado — contacta al equipo de negocio.',
-  moreInfo: 'Más información',
-  chooseCountryCo: 'Elegir Colombia',
-  chooseCountryCl: 'Elegir Chile',
-  formIntro: 'Esta información nos permite calcular un plan hecho a tu medida.',
-  timeBadge: 'Te toma menos de 2 minutos',
-  policyholderCardTitle: 'Tomador',
-  vehicleCardTitle: 'Vehículo',
-  trustMessage: 'Tus datos están protegidos y encriptados — solo los usamos para calcular tu cotización.',
-  selectPlaceholder: 'Selecciona…',
-  continue: 'Continuar',
-
-  step2Title: 'Paso 2 — Elige tu plan',
-  loadingPlans: 'Cargando los planes…',
-  loadPlansErrorPrefix: 'No se pudieron cargar los planes: ',
-  noPlansAvailable: 'No hay planes disponibles.',
-  plansIntro: 'Precios calculados para tu perfil y tu vehículo. Puedes cambiar de plan en cualquier momento.',
-  availablePlansAriaLabel: 'Planes disponibles',
-  recommendedBadge: 'Recomendado',
-  coveragesHeading: 'Coberturas',
-  benefitsHeading: 'Beneficios',
-  benefitsHint: 'Pasa el cursor o el foco para ver los beneficios',
-  backToDetails: 'Volver a mis datos',
-
-  step3Title: 'Paso 3 — Resumen y pago',
-  stepBadge: 'Paso 3 de 3',
-  paymentApproved: 'Pago aprobado',
-  approvedText: 'Tu transacción se completó correctamente. Revisa los detalles de tu contratación.',
-  quoteNumberLabel: 'Número de cotización',
-  thankYouText: 'Gracias — ya estás asegurado. Esta confirmación no se puede reenviar ni modificar.',
-  downloadReceipt: 'Descargar comprobante',
-  newQuote: 'Nueva cotización',
-  contractDetails: 'Detalles de tu contratación',
-  fullNameLabel: 'Nombre completo',
-  documentLabel: 'Documento',
-  emailLabel: 'Correo electrónico',
-  phoneLabel: 'Teléfono',
-  makeModelLabel: 'Marca / modelo',
-  makeLabel: 'Marca',
-  modelLabel: 'Modelo',
-  yearLabel: 'Año',
-  identifierLabel: 'Identificador',
-  activeBadge: 'Activo',
-  paymentInformation: 'Información del pago',
-  dateLabel: 'Fecha',
-  statusLabel: 'Estado',
-  approvedBadge: 'Aprobado',
-  emailNote: 'También recibirás esta información por correo electrónico.',
-  reviewLead: 'Revisa todo lo siguiente antes de pagar.',
-  paymentDeclined: 'Pago rechazado',
-  infoPreserved: 'Tu información se conservó — puedes intentarlo de nuevo.',
-  retryPayment: 'Reintentar pago',
-  chooseDifferentPlan: 'Elegir otro plan',
-  chosenPlanTitle: 'Plan elegido',
-  editData: 'Editar datos',
-  changePlan: 'Cambiar de plan',
-  termsAndConditions: 'Términos y condiciones',
-  loadingTerms: 'Cargando los términos y condiciones…',
-  loadTermsErrorPrefix: 'No se pudieron cargar los términos y condiciones: ',
-  mustAcceptTerms: 'Debes aceptar los términos y condiciones antes de pagar.',
-  acceptTermsLabel: 'He leído y acepto los términos y condiciones',
-  noTermsConfigured: 'Aún no hay términos y condiciones configurados para este país. Contacta al equipo de negocio.',
-  pay: 'Pagar',
-  processing: 'Procesando…',
-  simulateDecline: 'Simular un pago rechazado',
-  payNote:
-    'Esta es una pasarela de pago de prueba — nunca se realiza un cobro real. Usa "Simular un pago rechazado" para ver cómo se maneja un pago rechazado.',
-  processingPayment: 'Procesando tu pago…',
-};
-
-export const TRANSLATIONS: Record<Language, typeof EN> = { en: EN, es: ES };
-
 export type TranslationKey = keyof typeof EN;
 
-export function translate(key: TranslationKey, language: Language): string {
-  return TRANSLATIONS[language][key];
+export function translate(key: TranslationKey): string {
+  return EN[key];
 }

@@ -3,7 +3,6 @@ import { Router, RouterLink } from '@angular/router';
 import { translate, type TranslationKey } from '../../../core/i18n/translations';
 import { CountryContentService } from '../../../core/services/country-content.service';
 import { CountryStore } from '../../../core/state/country.store';
-import { LanguageStore } from '../../../core/state/language.store';
 import { WizardStore } from '../../../core/state/wizard.store';
 import {
   applySimulatedPricingRule,
@@ -65,11 +64,10 @@ export class QuotePlansPageComponent {
   private readonly countryContentService = inject(CountryContentService);
   private readonly countryStore = inject(CountryStore);
   private readonly wizardStore = inject(WizardStore);
-  private readonly languageStore = inject(LanguageStore);
   private readonly router = inject(Router);
 
   t(key: TranslationKey): string {
-    return translate(key, this.languageStore.language());
+    return translate(key);
   }
 
   private readonly plansState = this.countryContentService.getPlans();
@@ -77,9 +75,7 @@ export class QuotePlansPageComponent {
   readonly loading = computed(() => this.plansState().loading);
   readonly error = computed(() => this.plansState().error);
 
-  readonly isNoCountrySelectedError = computed(
-    () => this.error() === translate('noCountrySelected', this.languageStore.language()),
-  );
+  readonly isNoCountrySelectedError = computed(() => this.error() === translate('noCountrySelected'));
 
   readonly isEmpty = computed(() => {
     const state = this.plansState();

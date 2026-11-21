@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import { CountryStore } from '../../../core/state/country.store';
-import { LanguageStore } from '../../../core/state/language.store';
 import { WizardStore } from '../../../core/state/wizard.store';
 import { translate } from '../../../core/i18n/translations';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -14,14 +13,13 @@ import type { CountryCode } from '../../../core/models/country.model';
 })
 export class CountrySelectorComponent {
   private readonly countryStore = inject(CountryStore);
-  private readonly languageStore = inject(LanguageStore);
   private readonly wizardStore = inject(WizardStore);
 
   readonly country = this.countryStore.country;
 
-  readonly ariaLabel = () => translate('countrySelectorAriaLabel', this.languageStore.language());
+  readonly ariaLabel = () => translate('countrySelectorAriaLabel');
 
-  readonly confirmMessage = () => translate('confirmCountryChange', this.languageStore.language());
+  readonly confirmMessage = () => translate('confirmCountryChange');
 
   // The country awaiting confirmation, while the dialog is open — null the rest of the time.
   readonly pendingCountry = signal<CountryCode | null>(null);

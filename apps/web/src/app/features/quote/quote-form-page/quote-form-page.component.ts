@@ -15,7 +15,6 @@ import { translate, type TranslationKey } from '../../../core/i18n/translations'
 import { parseDateOnly } from '../../../core/formatting/parse-date-only';
 import { CountryContentService } from '../../../core/services/country-content.service';
 import { CountryStore } from '../../../core/state/country.store';
-import { LanguageStore } from '../../../core/state/language.store';
 import { WizardStore } from '../../../core/state/wizard.store';
 import type { CountryCode } from '../../../core/models/country.model';
 import type {
@@ -168,12 +167,11 @@ export class QuoteFormPageComponent {
   private readonly countryContentService = inject(CountryContentService);
   private readonly countryStore = inject(CountryStore);
   private readonly wizardStore = inject(WizardStore);
-  private readonly languageStore = inject(LanguageStore);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   t(key: TranslationKey): string {
-    return translate(key, this.languageStore.language());
+    return translate(key);
   }
 
   private readonly fieldsState = this.countryContentService.getFormFields();
@@ -185,9 +183,7 @@ export class QuoteFormPageComponent {
   // Distinguishes "no country chosen yet" from a genuine fetch failure, so the error
   // state can offer the country picker directly instead of a "Retry" that would just
   // refetch with the same missing country.
-  readonly isNoCountrySelectedError = computed(
-    () => this.error() === translate('noCountrySelected', this.languageStore.language()),
-  );
+  readonly isNoCountrySelectedError = computed(() => this.error() === translate('noCountrySelected'));
 
   readonly isEmpty = computed(() => {
     const state = this.fieldsState();

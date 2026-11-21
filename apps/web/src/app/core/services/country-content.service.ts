@@ -4,7 +4,6 @@ import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { translate } from '../i18n/translations';
 import { CountryStore } from '../state/country.store';
-import { LanguageStore } from '../state/language.store';
 import type { CountryCode } from '../models/country.model';
 import type { FormFieldEntry } from '../models/form-field.model';
 import type { PlanEntry } from '../models/plan.model';
@@ -21,17 +20,16 @@ export interface CountryContentState<T> {
 export class CountryContentService {
   private readonly http = inject(HttpClient);
   private readonly countryStore = inject(CountryStore);
-  private readonly languageStore = inject(LanguageStore);
 
   private noCountrySelectedState<T>(): CountryContentState<T> {
-    return { data: null, loading: false, error: translate('noCountrySelected', this.languageStore.language()) };
+    return { data: null, loading: false, error: translate('noCountrySelected') };
   }
 
   private toErrorMessage(error: unknown): string {
     if (error instanceof Error) {
       return error.message;
     }
-    return translate('failedToLoadContent', this.languageStore.language());
+    return translate('failedToLoadContent');
   }
 
   private readonly formFieldsRefresh = signal(0);
