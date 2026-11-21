@@ -7,13 +7,13 @@
 
 ## Current phase
 
-**Phase 7 — US-02 implementation (real plan list)** (starting next)
+**Phase 8 — US-03 implementation (summary and payment)** (starting next)
 
 ## Decisions log
 
 | Date | Decision | Status | Notes |
 |---|---|---|---|
-| 2026-11-21 | Phase 6 — US-01's real step-1 form implemented: dynamic typed `FormGroup` from live Strapi config, generic `Validators` mapping + custom `legalAgeValidator()` for `dateOfBirth`, misconfigured-`select` state, accessible labels/errors, `sessionStorage` rehydration | **Verified and approved** | Built by `angular-builder`; this agent gave an honest, itemized verification (including what it could *not* verify live, e.g. the misconfigured-select state has no real seed data to trigger it) and caught a real bug itself (`computed()` over `FormGroup.valid`, which mutates in place rather than emitting signal writes — fixed to a plain method). Independently re-verified in the browser myself: country switch renders the real 13-field CO form, legal-age validator fires with the exact configured error message, full valid fill enables Continue and navigates to `/quote/plans`, and browser back-navigation restores every value with no re-fetch |
+| 2026-11-21 | Phase 7 — US-02's real plan list implemented: `SIMULATED-PRICING-RULE-v1` as pure, independently-testable functions (`apps/web/src/app/core/pricing/simulated-pricing-rule.ts`), country-locale currency formatting, native-radio accessible selection, stale-selection re-validation on (re)entry | **Verified and approved** | Built by `angular-builder`; gave the most rigorous self-verification yet (hand-calculated pricing cross-checked against the rendered UI, a stale selection seeded directly into `sessionStorage` and confirmed cleared live, real keyboard arrow-key navigation, `es-CO` vs `es-CL` currency formatting visibly confirmed). Independently re-verified: code read (no `any`, correct `untracked`/`computed` usage, no repeat of the Phase 6 mutable-vs-signal bug), own `tsc`/`ng build` run clean, and a live spot-check in the browser (correct base prices, correct single `RECOMMENDED` badge, inactive plan excluded, selection + Continue enablement) | — US-01's real step-1 form implemented: dynamic typed `FormGroup` from live Strapi config, generic `Validators` mapping + custom `legalAgeValidator()` for `dateOfBirth`, misconfigured-`select` state, accessible labels/errors, `sessionStorage` rehydration | **Verified and approved** | Built by `angular-builder`; this agent gave an honest, itemized verification (including what it could *not* verify live, e.g. the misconfigured-select state has no real seed data to trigger it) and caught a real bug itself (`computed()` over `FormGroup.valid`, which mutates in place rather than emitting signal writes — fixed to a plain method). Independently re-verified in the browser myself: country switch renders the real 13-field CO form, legal-age validator fires with the exact configured error message, full valid fill enables Continue and navigates to `/quote/plans`, and browser back-navigation restores every value with no re-fetch |
 | 2026-11-21 | Added `refetchFormFields()`/`refetchPlans()`/`refetchTerms()` to `CountryContentService`; changed the form page's "Retry" button from `window.location.reload()` to the real refetch | **Fixed and approved** | `angular-builder` had flagged the full-page-reload workaround itself (no clean refetch existed on the shared service, and extending it was out of that task's scope) rather than silently shipping it — fixed directly since it's a small, consistent addition to an already-approved service, not a new pattern |
 | 2026-11-21 | Phase 5 — Angular `apps/web` scaffolded: standalone routing shell for the 3-step wizard, `CountryStore`/`WizardStore` (signals + `sessionStorage`), `CountryContentService` (country structurally cannot be omitted; explicit loading/error/data state) | **Verified and approved** | Built by `angular-builder`; this agent, unlike `strapi-architect`, actually ran `ng build`/`tsc --noEmit`/`ng serve` + curl and pasted real output — independently re-verified anyway (own `ng build` run clean, code read directly, zero `any` confirmed by grep) |
 | 2026-11-21 | Corrected US-01/02/03 Data contracts: Strapi 5's REST API returns attributes flat on the entity (`{id, documentId, ...fields}`), not nested under a v4-style `attributes` key; `SelectedPlan.id` is `number`, not `string` | **Approved** | Discovered by `angular-builder` against the live, already-seeded Strapi API; independently confirmed against this session's own earlier `curl` output from Phase 4. `apps/web/src/app/core/models/*.ts` is the source of truth going forward |
@@ -38,7 +38,11 @@
   unimplemented anywhere — intentionally deferred to Phase 8 (US-03), since masking
   mainly matters once the number is displayed read-only in the summary. Tracked here so
   it isn't lost.
-- Next: implement US-02's real plan list (Phase 7) against `CountryContentService.getPlans()`.
+- "Two+ plans marked recommended" is untested against real data (current seed only has
+  one per country); code renders the badge on every flagged plan unconditionally, which
+  matches the spec's resolution, but flagging that this path is unverified live.
+- Next: implement US-03's real summary & payment screen (Phase 8), including the
+  deferred document-number masking.
 
 ## Phase tracker
 
@@ -51,6 +55,7 @@
 | 4 — Strapi content-types & seed | Done, verified |
 | 5 — Angular base scaffolding | Done, verified |
 | 6 — US-01 implementation | Done, verified |
+| 7 — US-02 implementation | Done, verified |
 | 5 — Angular base scaffolding | Not started |
 | 6 — US-01 implementation | Not started |
 | 7 — US-02 implementation | Not started |

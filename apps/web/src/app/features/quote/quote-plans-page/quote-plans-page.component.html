@@ -1,4 +1,69 @@
-<section>
-  <h1>Step 2 — Plans</h1>
-  <p>Placeholder for US-02. The real plan list is built in a later phase.</p>
+<section class="quote-plans-page">
+  <h1>Step 2 — Choose your plan</h1>
+
+  @if (loading()) {
+    <div class="quote-plans-page__status" role="status" aria-live="polite">
+      <p>Loading plans…</p>
+    </div>
+  } @else if (error(); as errorMessage) {
+    <div class="quote-plans-page__status quote-plans-page__status--error" role="alert">
+      <p>We couldn't load the plans: {{ errorMessage }}</p>
+      <button type="button" (click)="retry()">Retry</button>
+    </div>
+  } @else if (isEmpty()) {
+    <div class="quote-plans-page__status" role="status">
+      <p>No plans available.</p>
+    </div>
+  } @else {
+    <div class="quote-plans-page__list" role="radiogroup" aria-label="Available plans">
+      @for (plan of plans(); track plan.id) {
+        <label class="plan-card" [class.plan-card--selected]="selectedPlanId() === plan.id">
+          <input
+            type="radio"
+            name="plan"
+            class="plan-card__radio"
+            [value]="plan.id"
+            [checked]="selectedPlanId() === plan.id"
+            (change)="selectPlan(plan)"
+          />
+
+          <div class="plan-card__content">
+            <div class="plan-card__header">
+              <h2 class="plan-card__name">{{ plan.name }}</h2>
+              @if (plan.recommended) {
+                <span class="plan-card__badge">Recommended</span>
+              }
+            </div>
+
+            <p class="plan-card__description">{{ plan.shortDescription }}</p>
+            <p class="plan-card__price">{{ plan.formattedPrice }}</p>
+
+            @if (plan.coverages.length > 0) {
+              <div class="plan-card__section">
+                <h3>Coverages</h3>
+                <ul>
+                  @for (coverage of plan.coverages; track coverage.id) {
+                    <li><strong>{{ coverage.name }}</strong> — {{ coverage.description }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            @if (plan.benefits.length > 0) {
+              <div class="plan-card__section">
+                <h3>Benefits</h3>
+                <ul>
+                  @for (benefit of plan.benefits; track benefit.id) {
+                    <li><strong>{{ benefit.name }}</strong> — {{ benefit.description }}</li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        </label>
+      }
+    </div>
+
+    <button type="button" [disabled]="!canContinue()" (click)="continue()">Continue</button>
+  }
 </section>
