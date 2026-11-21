@@ -8,7 +8,7 @@ const STORAGE_KEY = 'quote.language';
 // stays in whatever language the business team configured it in for that country.
 @Injectable({ providedIn: 'root' })
 export class LanguageStore {
-  private readonly languageSignal = signal<Language>(readStoredLanguage() ?? 'es');
+  private readonly languageSignal = signal<Language>(readStoredLanguage() ?? 'en');
 
   readonly language = this.languageSignal.asReadonly();
 
