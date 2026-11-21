@@ -7,12 +7,14 @@
 
 ## Current phase
 
-**Phase 13 — FLOW.md / README.md / logs** (starting next)
+**Phase 14 — Final QA & delivery** (starting next)
 
 ## Decisions log
 
 | Date | Decision | Status | Notes |
 |---|---|---|---|
+| 2026-11-21 | Phase 13 — `FLOW.md` (step table, Mermaid diagram, 3 required reflections, tool/SDD justification) and `README.md` (run instructions, requirements-not-met) written | **Done** | Discovered a missing required deliverable while writing this phase: "unedited logs of your sessions with the agents." Located the 8 subagent session transcripts + this project's main orchestrator transcript on disk (Claude Code's local session storage) |
+| 2026-11-21 | Agent session logs: include the 8 subagent transcripts in full (`logs/subagents/`); **exclude** the main orchestrator session transcript | **User-approved, twice** | First asked the user how to handle logs given the main transcript contains their personal email + Anthropic account UUIDs in plain text; they initially chose "include everything," reasoning the repo might be private. Independently verified via the GitHub API that the repo is actually **public**. Re-asked with that corrected fact; user then chose subagent-logs-only. Documented in `logs/README.md` and `README.md`'s "Requirements not fully met" section — this is the kind of privacy decision that must go to the human, never decided unilaterally in either direction |
 | 2026-11-21 | Phase 12 — consolidated per-story review files (`docs/reviews/US-01.md`, `US-02.md`, `US-03.md`, `infra-strapi-bootstrap.md`) and the full traceability table (`docs/traceability.md`) | **Done** | Written directly by the orchestrator, not a fresh `code-reviewer` run — the real review work already happened live throughout Phases 4-10 (every bug in this project was actually found and fixed during those phases, not invented now); Phase 12 is the formal write-up of that record, not a new review pass. US-01: 2 Important findings (Continue-button bug, UTC date-parsing bug), both fixed. US-02: 0 findings. US-03: 1 Important finding (sticky terms checkbox), fixed, plus 1 process gap (no live walkthrough) closed by Phase 10's e2e suite. Infra: 1 Important finding (Strapi seed bootstrap TS compile failure masked by a stalled agent's false self-report), fixed |
 | 2026-11-21 | Phase 11 — `docker-compose.yml` + `apps/cms/Dockerfile` + `apps/web/Dockerfile`/`nginx.conf`: the whole project starts with `docker compose up` | **Verified and approved** | Built directly (no subagent — infra work spanning both apps plus root compose didn't fit any single defined subagent role cleanly). Docker Desktop wasn't running; started it and waited for the daemon. Actually ran `docker compose up --build`, not just wrote the files: confirmed Strapi seeds fresh on every `up` (no DB volume, by design — guarantees seed data is always present, never stale), confirmed exactly the same 26/8/2 form-field/plan/terms counts as the dev-server runs, confirmed write endpoints still return 403 inside the container, confirmed the Angular SPA (served via nginx) returns 200 on a deep-linked route (`/quote/form`) thanks to the `try_files` fallback, and re-ran a full `down` + `up` cycle to confirm the fresh-seed behavior holds. Containers stopped cleanly afterward (`docker compose down`) |
 | 2026-11-21 | Phase 10 — 11 unit spec files (67 tests, Vitest+TestBed) + 3 Playwright e2e specs (happy-path CO, invalid-field, rejected-payment), all for real | **Verified and approved** | Built by `test-writer`. Independently re-ran both suites myself from a cold start (no servers running beforehand): `ng test` → 67/67 passed; `playwright test` → 3/3 passed, Strapi auto-started/torn down cleanly by `global-setup.ts`, confirmed no orphaned processes afterward. Read the e2e specs directly — they assert real things (raw document number never appears anywhere in the summary DOM, not just that the masked one does; post-approval back/forward navigation never resurrects a payable summary; rejected-payment preserves step-1 data checked by navigating back to it) |
@@ -58,10 +60,9 @@
   the Playwright e2e suite exercised the real pay flow, focus-dependent behavior aside
   (Playwright doesn't assert focus by default; if that specific detail ever needs
   confirming, it's the one remaining gap, otherwise consider it resolved by Phase 10).
-- Next: Phase 13 — `FLOW.md` (the agentic flow table + diagram + 3 reflection
-  questions) and `README.md` (run instructions, unmet requirements if any). Note for
-  README: Docker Desktop must be running before `docker compose up` — call this out
-  explicitly, since it's an easy thing for someone else to miss.
+- Next: Phase 14 — final QA pass (re-run everything clean once more) and delivery
+  (confirm no real secrets/personal data in the repo, share the repo with whoever sent
+  the test).
 
 ## Phase tracker
 
@@ -80,6 +81,7 @@
 | 10 — Testing (unit + e2e) | Done, verified |
 | 11 — Docker Compose & seed automation | Done, verified |
 | 12 — Review consolidation & traceability | Done |
+| 13 — FLOW.md / README.md / logs | Done |
 | 5 — Angular base scaffolding | Not started |
 | 6 — US-01 implementation | Not started |
 | 7 — US-02 implementation | Not started |
