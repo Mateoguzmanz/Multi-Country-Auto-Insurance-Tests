@@ -7,12 +7,13 @@
 
 ## Current phase
 
-**Phase 12 — Review consolidation & traceability** (starting next)
+**Phase 13 — FLOW.md / README.md / logs** (starting next)
 
 ## Decisions log
 
 | Date | Decision | Status | Notes |
 |---|---|---|---|
+| 2026-11-21 | Phase 12 — consolidated per-story review files (`docs/reviews/US-01.md`, `US-02.md`, `US-03.md`, `infra-strapi-bootstrap.md`) and the full traceability table (`docs/traceability.md`) | **Done** | Written directly by the orchestrator, not a fresh `code-reviewer` run — the real review work already happened live throughout Phases 4-10 (every bug in this project was actually found and fixed during those phases, not invented now); Phase 12 is the formal write-up of that record, not a new review pass. US-01: 2 Important findings (Continue-button bug, UTC date-parsing bug), both fixed. US-02: 0 findings. US-03: 1 Important finding (sticky terms checkbox), fixed, plus 1 process gap (no live walkthrough) closed by Phase 10's e2e suite. Infra: 1 Important finding (Strapi seed bootstrap TS compile failure masked by a stalled agent's false self-report), fixed |
 | 2026-11-21 | Phase 11 — `docker-compose.yml` + `apps/cms/Dockerfile` + `apps/web/Dockerfile`/`nginx.conf`: the whole project starts with `docker compose up` | **Verified and approved** | Built directly (no subagent — infra work spanning both apps plus root compose didn't fit any single defined subagent role cleanly). Docker Desktop wasn't running; started it and waited for the daemon. Actually ran `docker compose up --build`, not just wrote the files: confirmed Strapi seeds fresh on every `up` (no DB volume, by design — guarantees seed data is always present, never stale), confirmed exactly the same 26/8/2 form-field/plan/terms counts as the dev-server runs, confirmed write endpoints still return 403 inside the container, confirmed the Angular SPA (served via nginx) returns 200 on a deep-linked route (`/quote/form`) thanks to the `try_files` fallback, and re-ran a full `down` + `up` cycle to confirm the fresh-seed behavior holds. Containers stopped cleanly afterward (`docker compose down`) |
 | 2026-11-21 | Phase 10 — 11 unit spec files (67 tests, Vitest+TestBed) + 3 Playwright e2e specs (happy-path CO, invalid-field, rejected-payment), all for real | **Verified and approved** | Built by `test-writer`. Independently re-ran both suites myself from a cold start (no servers running beforehand): `ng test` → 67/67 passed; `playwright test` → 3/3 passed, Strapi auto-started/torn down cleanly by `global-setup.ts`, confirmed no orphaned processes afterward. Read the e2e specs directly — they assert real things (raw document number never appears anywhere in the summary DOM, not just that the masked one does; post-approval back/forward navigation never resurrects a payable summary; rejected-payment preserves step-1 data checked by navigating back to it) |
 | 2026-11-21 | Real bug found and fixed by `test-writer`: `new Date('YYYY-MM-DD')` parses as UTC midnight, which silently shifts the calendar date back one day when read with local getters in any timezone behind UTC — including Colombia and Chile, hitting both the legal-age validator (US-01) and the pricing rule's driver-age factor (US-02) | **Fixed and verified** | Added `core/formatting/parse-date-only.ts` (parses `YYYY-MM-DD` as local midnight instead), used at both call sites. Independently confirmed the fix is in place and the relevant tests pass |
@@ -57,12 +58,10 @@
   the Playwright e2e suite exercised the real pay flow, focus-dependent behavior aside
   (Playwright doesn't assert focus by default; if that specific detail ever needs
   confirming, it's the one remaining gap, otherwise consider it resolved by Phase 10).
-- Next: Phase 12 — consolidate code-review evidence per story into `docs/reviews/`, and
-  build the full user-story → spec → ADR → code → tests → review traceability table
-  (this largely already exists scattered across this file and the specs' Resolutions
-  sections; Phase 12 is about assembling it into one clear artifact).
-- Note for Phase 13 (README): Docker Desktop must be running before `docker compose up`
-  — call this out explicitly, since it's an easy thing for someone else to miss.
+- Next: Phase 13 — `FLOW.md` (the agentic flow table + diagram + 3 reflection
+  questions) and `README.md` (run instructions, unmet requirements if any). Note for
+  README: Docker Desktop must be running before `docker compose up` — call this out
+  explicitly, since it's an easy thing for someone else to miss.
 
 ## Phase tracker
 
@@ -80,6 +79,7 @@
 | 9 — Accessibility/responsive/security pass | Done |
 | 10 — Testing (unit + e2e) | Done, verified |
 | 11 — Docker Compose & seed automation | Done, verified |
+| 12 — Review consolidation & traceability | Done |
 | 5 — Angular base scaffolding | Not started |
 | 6 — US-01 implementation | Not started |
 | 7 — US-02 implementation | Not started |
