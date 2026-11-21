@@ -68,6 +68,13 @@
     }
   }
 
+  &__status-country-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
   &__status-retry {
     border: none;
     background: var(--color-coral);

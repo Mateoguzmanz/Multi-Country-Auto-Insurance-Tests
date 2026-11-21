@@ -11,7 +11,7 @@ test.describe('Chile — full happy-path wizard flow', () => {
     await page.goto('/');
     // The app defaults to Spanish; this suite asserts the English app-chrome strings.
     await page.getByRole('button', { name: 'English' }).click();
-    await page.getByRole('button', { name: 'Chile' }).click();
+    await page.getByRole('button', { name: 'Chile', exact: true }).click();
 
     // US-01 — fill a fully valid step-1 form (RUT as the document type).
     await expect(page).toHaveURL(/\/quote\/form$/);

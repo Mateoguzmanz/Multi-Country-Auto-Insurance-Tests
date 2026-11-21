@@ -18,7 +18,18 @@
         </svg>
       </span>
       <p>{{ t('loadPlansErrorPrefix') }}{{ errorMessage }}</p>
-      <button type="button" class="quote-plans-page__status-retry" (click)="retry()">{{ t('retry') }}</button>
+      @if (isNoCountrySelectedError()) {
+        <div class="quote-plans-page__status-country-actions">
+          <button type="button" class="quote-plans-page__status-retry" (click)="selectCountry('CO')">
+            {{ t('chooseCountryCo') }}
+          </button>
+          <button type="button" class="quote-plans-page__status-retry" (click)="selectCountry('CL')">
+            {{ t('chooseCountryCl') }}
+          </button>
+        </div>
+      } @else {
+        <button type="button" class="quote-plans-page__status-retry" (click)="retry()">{{ t('retry') }}</button>
+      }
     </div>
   } @else if (isEmpty()) {
     <div class="quote-plans-page__status" role="status">

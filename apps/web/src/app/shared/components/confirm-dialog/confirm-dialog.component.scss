@@ -1,0 +1,73 @@
+.confirm-dialog {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+
+  &__panel {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 380px;
+    width: 100%;
+    box-shadow: 0 20px 44px rgba(16, 24, 40, 0.22);
+  }
+
+  &__message {
+    margin: 0 0 22px;
+    color: var(--color-text);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  &__cancel,
+  &__confirm {
+    border: none;
+    font: inherit;
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  &__cancel {
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1.5px solid var(--color-border);
+
+    &:hover {
+      background: var(--color-border);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-coral);
+      outline-offset: 2px;
+    }
+  }
+
+  &__confirm {
+    background: var(--color-coral);
+    color: #fff;
+
+    &:hover {
+      background: var(--color-coral-hover);
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--color-navy);
+      outline-offset: 2px;
+    }
+  }
+}

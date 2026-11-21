@@ -8,6 +8,9 @@ import type { Language } from '../models/language.model';
 const EN = {
   countrySelectorAriaLabel: 'Country selection',
   languageSelectorAriaLabel: 'Language selection',
+  confirmCountryChange: 'Changing country will restart your current quote. Continue?',
+  confirm: 'Confirm',
+  cancel: 'Cancel',
   noCountrySelected: 'No country selected.',
   failedToLoadContent: 'Failed to load content from the CMS.',
 
@@ -22,6 +25,9 @@ const EN = {
   retry: 'Retry',
   noFieldsConfigured: 'No fields are configured for this country yet. Please contact the business team.',
   fieldMisconfiguredSuffix: ' is misconfigured — contact the business team.',
+  moreInfo: 'More info',
+  chooseCountryCo: 'Choose Colombia',
+  chooseCountryCl: 'Choose Chile',
   formIntro: 'This information lets us calculate a plan tailored to you.',
   timeBadge: 'Takes less than 2 minutes',
   policyholderCardTitle: 'Policyholder',
@@ -91,6 +97,9 @@ const EN = {
 const ES: Record<keyof typeof EN, string> = {
   countrySelectorAriaLabel: 'Selección de país',
   languageSelectorAriaLabel: 'Selección de idioma',
+  confirmCountryChange: 'Cambiar de país reiniciará tu cotización actual. ¿Deseas continuar?',
+  confirm: 'Confirmar',
+  cancel: 'Cancelar',
   noCountrySelected: 'No se ha seleccionado ningún país.',
   failedToLoadContent: 'No se pudo cargar el contenido desde el CMS.',
 
@@ -105,6 +114,9 @@ const ES: Record<keyof typeof EN, string> = {
   retry: 'Reintentar',
   noFieldsConfigured: 'Aún no hay campos configurados para este país. Contacta al equipo de negocio.',
   fieldMisconfiguredSuffix: ' está mal configurado — contacta al equipo de negocio.',
+  moreInfo: 'Más información',
+  chooseCountryCo: 'Elegir Colombia',
+  chooseCountryCl: 'Elegir Chile',
   formIntro: 'Esta información nos permite calcular un plan hecho a tu medida.',
   timeBadge: 'Te toma menos de 2 minutos',
   policyholderCardTitle: 'Tomador',

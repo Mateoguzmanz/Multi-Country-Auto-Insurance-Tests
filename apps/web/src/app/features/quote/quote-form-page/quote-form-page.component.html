@@ -23,7 +23,18 @@
         </svg>
       </span>
       <p>{{ t('loadFormErrorPrefix') }}{{ errorMessage }}</p>
-      <button type="button" class="quote-form-page__status-retry" (click)="retry()">{{ t('retry') }}</button>
+      @if (isNoCountrySelectedError()) {
+        <div class="quote-form-page__status-country-actions">
+          <button type="button" class="quote-form-page__status-retry" (click)="selectCountry('CO')">
+            {{ t('chooseCountryCo') }}
+          </button>
+          <button type="button" class="quote-form-page__status-retry" (click)="selectCountry('CL')">
+            {{ t('chooseCountryCl') }}
+          </button>
+        </div>
+      } @else {
+        <button type="button" class="quote-form-page__status-retry" (click)="retry()">{{ t('retry') }}</button>
+      }
     </div>
   } @else if (isEmpty()) {
     <div class="quote-form-page__status" role="status">
@@ -48,36 +59,57 @@
               "{{ field.label }}"{{ t('fieldMisconfiguredSuffix') }}
             </p>
           } @else if (field.type === 'checkbox') {
-            <label class="quote-form-page__checkbox-row" [for]="'field-' + field.key">
-              <input
-                [id]="'field-' + field.key"
-                class="quote-form-page__checkbox"
-                type="checkbox"
-                [formControlName]="field.key"
-                [attr.aria-describedby]="describedBy(field)"
-                [attr.aria-invalid]="showError(field)"
-              />
-              <span>
-                {{ field.label }}
-                @if (field.required) {
-                  <span aria-hidden="true">*</span>
-                }
-              </span>
-            </label>
+            <div class="quote-form-page__checkbox-wrap">
+              <label class="quote-form-page__checkbox-row" [for]="'field-' + field.key">
+                <input
+                  [id]="'field-' + field.key"
+                  class="quote-form-page__checkbox"
+                  type="checkbox"
+                  [formControlName]="field.key"
+                  [attr.aria-describedby]="describedBy(field)"
+                  [attr.aria-invalid]="showError(field)"
+                />
+                <span>
+                  {{ field.label }}
+                  @if (field.required) {
+                    <span aria-hidden="true">*</span>
+                  }
+                </span>
+              </label>
+              @if (effectiveHelpText(field); as helpText) {
+                <span class="quote-form-page__help-wrap">
+                  <button
+                    type="button"
+                    class="quote-form-page__help-trigger"
+                    [attr.aria-label]="t('moreInfo')"
+                  >i</button>
+                  <span class="quote-form-page__help-tooltip" role="tooltip" [id]="helpId(field)">{{ helpText }}</span>
+                </span>
+              }
+            </div>
 
-            @if (effectiveHelpText(field); as helpText) {
-              <p class="quote-form-page__help" [id]="helpId(field)">{{ helpText }}</p>
-            }
             @if (showError(field)) {
               <p class="quote-form-page__error" [id]="errorId(field)" role="alert">{{ effectiveErrorMessage(field) }}</p>
             }
           } @else {
-            <label [for]="'field-' + field.key">
-              {{ field.label }}
-              @if (field.required) {
-                <span aria-hidden="true">*</span>
+            <div class="quote-form-page__label-row">
+              <label [for]="'field-' + field.key">
+                {{ field.label }}
+                @if (field.required) {
+                  <span aria-hidden="true">*</span>
+                }
+              </label>
+              @if (effectiveHelpText(field); as helpText) {
+                <span class="quote-form-page__help-wrap">
+                  <button
+                    type="button"
+                    class="quote-form-page__help-trigger"
+                    [attr.aria-label]="t('moreInfo')"
+                  >i</button>
+                  <span class="quote-form-page__help-tooltip" role="tooltip" [id]="helpId(field)">{{ helpText }}</span>
+                </span>
               }
-            </label>
+            </div>
 
             <div class="quote-form-page__input-wrap">
               @switch (field.type) {
@@ -136,9 +168,6 @@
               }
             </div>
 
-            @if (effectiveHelpText(field); as helpText) {
-              <p class="quote-form-page__help" [id]="helpId(field)">{{ helpText }}</p>
-            }
             @if (showError(field)) {
               <p class="quote-form-page__error" [id]="errorId(field)" role="alert">{{ effectiveErrorMessage(field) }}</p>
             }

@@ -18,3 +18,11 @@
     Chile
   </button>
 </div>
+
+@if (pendingCountry()) {
+  <app-confirm-dialog
+    [message]="confirmMessage()"
+    (confirmed)="confirmPendingCountry()"
+    (cancelled)="cancelPendingCountry()"
+  />
+}

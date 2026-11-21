@@ -10,7 +10,7 @@ test.describe('Colombia — rejected payment (US-03)', () => {
     await page.goto('/');
     // The app defaults to Spanish; this suite asserts the English app-chrome strings.
     await page.getByRole('button', { name: 'English' }).click();
-    await page.getByRole('button', { name: 'Colombia' }).click();
+    await page.getByRole('button', { name: 'Colombia', exact: true }).click();
     await fillValidCoStep1Form(page);
     await page.getByRole('button', { name: 'Continue' }).click();
 

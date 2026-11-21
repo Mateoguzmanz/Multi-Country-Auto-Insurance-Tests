@@ -6,7 +6,7 @@ test.describe('Colombia — invalid-field scenario (US-01)', () => {
     await page.goto('/');
     // The app defaults to Spanish; this suite asserts the English app-chrome strings.
     await page.getByRole('button', { name: 'English' }).click();
-    await page.getByRole('button', { name: 'Colombia' }).click();
+    await page.getByRole('button', { name: 'Colombia', exact: true }).click();
     await expect(page).toHaveURL(/\/quote\/form$/);
 
     // Everything else is valid except an under-age date of birth.

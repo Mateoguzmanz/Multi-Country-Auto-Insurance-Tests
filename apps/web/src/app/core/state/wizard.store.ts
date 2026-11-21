@@ -38,6 +38,17 @@ export class WizardStore {
   // or 2, only starting an entirely new quote (see `reset()`).
   readonly isApproved = computed(() => this.stateSignal().payment.status === 'approved');
 
+  // Whether any part of the current quote has been started — used to warn before an
+  // action (e.g. switching country) that would silently discard it via `reset()`.
+  readonly hasProgress = computed(() => {
+    const state = this.stateSignal();
+    return (
+      Object.keys(state.step1.value).length > 0 ||
+      state.selectedPlan !== null ||
+      state.payment.status !== 'idle'
+    );
+  });
+
   constructor(private readonly countryStore: CountryStore) {
     effect(() => {
       persistState(this.stateSignal());

@@ -77,6 +77,10 @@ export class QuotePlansPageComponent {
   readonly loading = computed(() => this.plansState().loading);
   readonly error = computed(() => this.plansState().error);
 
+  readonly isNoCountrySelectedError = computed(
+    () => this.error() === translate('noCountrySelected', this.languageStore.language()),
+  );
+
   readonly isEmpty = computed(() => {
     const state = this.plansState();
     return !state.loading && !state.error && state.data !== null && state.data.length === 0;
@@ -147,5 +151,11 @@ export class QuotePlansPageComponent {
 
   retry(): void {
     this.countryContentService.refetchPlans();
+  }
+
+  // See QuoteFormPageComponent.selectCountry: a plain "Retry" can't fix a missing
+  // country, so the error state offers a direct one-click pick instead.
+  selectCountry(country: CountryCode): void {
+    this.countryStore.setCountry(country);
   }
 }

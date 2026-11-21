@@ -14,8 +14,10 @@ import type { Subscription } from 'rxjs';
 import { translate, type TranslationKey } from '../../../core/i18n/translations';
 import { parseDateOnly } from '../../../core/formatting/parse-date-only';
 import { CountryContentService } from '../../../core/services/country-content.service';
+import { CountryStore } from '../../../core/state/country.store';
 import { LanguageStore } from '../../../core/state/language.store';
 import { WizardStore } from '../../../core/state/wizard.store';
+import type { CountryCode } from '../../../core/models/country.model';
 import type {
   FormFieldConditionalRule,
   FormFieldEntry,
@@ -164,6 +166,7 @@ export function buildStep1FormGroup(fields: FormFieldEntry[], existingValue: Ste
 })
 export class QuoteFormPageComponent {
   private readonly countryContentService = inject(CountryContentService);
+  private readonly countryStore = inject(CountryStore);
   private readonly wizardStore = inject(WizardStore);
   private readonly languageStore = inject(LanguageStore);
   private readonly router = inject(Router);
@@ -178,6 +181,13 @@ export class QuoteFormPageComponent {
   readonly loading = computed(() => this.fieldsState().loading);
   readonly error = computed(() => this.fieldsState().error);
   readonly fields = computed(() => this.fieldsState().data ?? []);
+
+  // Distinguishes "no country chosen yet" from a genuine fetch failure, so the error
+  // state can offer the country picker directly instead of a "Retry" that would just
+  // refetch with the same missing country.
+  readonly isNoCountrySelectedError = computed(
+    () => this.error() === translate('noCountrySelected', this.languageStore.language()),
+  );
 
   readonly isEmpty = computed(() => {
     const state = this.fieldsState();
@@ -263,10 +273,6 @@ export class QuoteFormPageComponent {
     const existingValue = untracked(() => this.wizardStore.state().step1.value);
     const group = buildStep1FormGroup(fields, existingValue);
 
-    if (Object.keys(existingValue).length > 0) {
-      group.markAllAsTouched();
-    }
-
     this.formSubscriptionCleanup?.();
     const subscriptions: Subscription[] = [];
 
@@ -339,7 +345,9 @@ export class QuoteFormPageComponent {
 
   // Live positive feedback once a free-text/number field becomes valid — reuses whatever
   // pattern/length rules the business team already configured for that field and country,
-  // rather than guessing at a single hardcoded field (e.g. the vehicle plate).
+  // rather than guessing at a single hardcoded field (e.g. the vehicle plate). Doesn't
+  // require `dirty`/`touched`: a value restored from a reload (still pristine) is just as
+  // validly "done" as one the person just typed, so the checkmark must survive a refresh.
   isValid(field: FormFieldEntry): boolean {
     if (field.type === 'checkbox' || field.type === 'select') {
       return false;
@@ -348,7 +356,7 @@ export class QuoteFormPageComponent {
     if (!control) {
       return false;
     }
-    return control.valid && (control.dirty || control.touched) && control.value !== '' && control.value !== null;
+    return control.valid && control.value !== '' && control.value !== null;
   }
 
   describedBy(field: FormFieldEntry): string | null {
@@ -382,6 +390,13 @@ export class QuoteFormPageComponent {
 
   retry(): void {
     this.countryContentService.refetchFormFields();
+  }
+
+  // Quick country pick directly from the "no country selected" error — a plain "Retry"
+  // there would just refetch with the same missing country, so this offers the fix in
+  // one click instead of sending the person hunting for the selector in the header.
+  selectCountry(country: CountryCode): void {
+    this.countryStore.setCountry(country);
   }
 
   onSubmit(): void {
