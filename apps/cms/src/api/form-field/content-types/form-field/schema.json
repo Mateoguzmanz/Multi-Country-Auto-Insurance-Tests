@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "form_fields",
+  "info": {
+    "singularName": "form-field",
+    "pluralName": "form-fields",
+    "displayName": "Form Field",
+    "description": "Country-scoped, business-configurable step-1 form field definition"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "key": {
+      "type": "string",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["text", "number", "select", "date", "checkbox"],
+      "required": true
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    },
+    "order": {
+      "type": "integer",
+      "required": true
+    },
+    "country": {
+      "type": "enumeration",
+      "enum": ["CO", "CL"],
+      "required": true
+    },
+    "helpText": {
+      "type": "string"
+    },
+    "errorMessage": {
+      "type": "string",
+      "required": true
+    },
+    "validation": {
+      "type": "json"
+    },
+    "options": {
+      "type": "json"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "terms_and_conditions",
+  "info": {
+    "singularName": "terms-and-condition",
+    "pluralName": "terms-and-conditions",
+    "displayName": "Terms and Condition",
+    "description": "Country-scoped terms and conditions text"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "country": {
+      "type": "enumeration",
+      "enum": ["CO", "CL"],
+      "required": true
+    },
+    "version": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "richtext",
+      "required": true
+    }
+  }
+}

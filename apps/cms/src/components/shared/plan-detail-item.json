@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_shared_plan_detail_items",
+  "info": {
+    "displayName": "Plan Detail Item",
+    "description": "A single coverage or benefit entry shared by the plan content-type"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

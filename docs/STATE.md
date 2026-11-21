@@ -7,12 +7,13 @@
 
 ## Current phase
 
-**Phase 4 — Strapi content-types, permissions & seed data** (starting)
+**Phase 5 — Angular base scaffolding** (starting next)
 
 ## Decisions log
 
 | Date | Decision | Status | Notes |
 |---|---|---|---|
+| 2026-11-21 | Phase 4 — Strapi `apps/cms` scaffolded: `form-field`/`plan`/`terms-and-condition` content-types, `shared.plan-detail-item` component, idempotent seed bootstrap, Public role limited to `find`/`findOne` on the three content-types | **Verified and approved** | Built by `strapi-architect` subagent; the agent stalled mid-task reporting vague "waiting on monitor" status twice without a final report, so verification was done directly against the running SQLite dev DB instead of trusting its self-report — confirmed 26/8/2 seeded entries (×2 for draft+published rows) and exactly 6 Public-role permissions (find/findOne only, no write), no secrets committed (`.env` correctly gitignored) |
 | 2026-11-21 | ADR-0002 — reserved semantic `key` convention bridges US-01's dynamic form with US-02/US-03's semantic field needs | **Accepted** | `docs/adr/0002-dynamic-form-rendering.md`; surfaced during spec reconciliation, not anticipated at Phase 0 |
 | 2026-11-21 | US-01, US-02, US-03 specs | **Approved** | `specs/US-01-*.md`, `specs/US-02-*.md`, `specs/US-03-*.md`; drafted in parallel by 3 `spec-writer` subagent runs, open questions resolved in a single human review round (see each spec's "Resolutions" section) |
 | 2026-11-21 | US-03 simulated payment failure: deterministic test-level mock, no user-facing "simulate failure" UI control | Approved | Keeps the real flow free of dev-only UI; e2e reliability handled by `test-writer` stubbing the payment service |
@@ -27,8 +28,9 @@
 
 ## Open questions / next decision needed
 
-- None blocking. Next: `strapi-architect` builds `apps/cms` (Phase 4) against ADR-0001,
-  ADR-0002 and the three approved specs.
+- None blocking. Next: `angular-builder` scaffolds `apps/web` (Phase 5) — standalone
+  Angular 21 app, routing for the 3-step wizard, and a `CountryContentService` that always
+  applies the ADR-0001 country filter.
 
 ## Phase tracker
 
@@ -38,7 +40,7 @@
 | 1 — Multi-country ADR | Accepted |
 | 2 — Specs (US-01/02/03) | Approved |
 | 3 — Additional technical ADRs | ADR-0002 Accepted |
-| 4 — Strapi content-types & seed | In progress |
+| 4 — Strapi content-types & seed | Done, verified |
 | 5 — Angular base scaffolding | Not started |
 | 6 — US-01 implementation | Not started |
 | 7 — US-02 implementation | Not started |

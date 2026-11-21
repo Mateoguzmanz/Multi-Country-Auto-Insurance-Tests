@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "plans",
+  "info": {
+    "singularName": "plan",
+    "pluralName": "plans",
+    "displayName": "Plan",
+    "description": "Country-scoped insurance plan with coverages, benefits and price"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "shortDescription": {
+      "type": "text",
+      "required": true
+    },
+    "basePrice": {
+      "type": "integer",
+      "required": true
+    },
+    "currency": {
+      "type": "enumeration",
+      "enum": ["COP", "CLP"],
+      "required": true
+    },
+    "coverages": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.plan-detail-item"
+    },
+    "benefits": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.plan-detail-item"
+    },
+    "order": {
+      "type": "integer",
+      "required": true
+    },
+    "recommended": {
+      "type": "boolean",
+      "default": false
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "country": {
+      "type": "enumeration",
+      "enum": ["CO", "CL"],
+      "required": true
+    }
+  }
+}
