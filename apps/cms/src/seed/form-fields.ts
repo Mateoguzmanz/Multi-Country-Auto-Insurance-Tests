@@ -1,18 +1,18 @@
 type FieldType = 'text' | 'number' | 'select' | 'date' | 'checkbox';
 type CountryCode = 'CO' | 'CL';
 
-interface FormFieldOption {
-  label: string;
-  value: string;
-}
+// Same JSON-field constraint as FormFieldValidation below: this needs a genuine string
+// index signature (not a mapped type over specific literal keys) to structurally
+// satisfy Strapi's generated JSON value type.
+type FormFieldOption = Record<string, string>;
 
-interface FormFieldValidation {
-  min?: number;
-  max?: number;
-  minLength?: number;
-  maxLength?: number;
-  pattern?: string;
-}
+// Strapi stores this field as JSON. A plain index-signature record (rather than a
+// named-property interface) is what structurally satisfies the generated JSON value
+// type; `undefined` is deliberately excluded from the value union since it isn't a
+// valid JSON value — omit a key entirely instead of setting it to undefined. The keys
+// used below (min, max, minLength, maxLength, pattern) are still checked against this
+// type at each call site.
+type FormFieldValidation = Record<string, number | string>;
 
 interface FormFieldSeed {
   key: string;
